@@ -1,0 +1,61 @@
+@port = 8080
+@baseUrl = http://localhost:{{port}}/api
+
+### * test retrieving all users
+GET {{baseUrl}}/users
+
+### * test retrieving users by role
+GET {{baseUrl}}/users?userLevel=unitLeader
+
+### * test retrieving users by status
+GET {{baseUrl}}/users?status=pending
+
+### * test retrieving users by SCHOOL
+GET {{baseUrl}}/users?school=EARIST&userLevel=scout
+
+### * test retrieving user by its id
+GET {{baseUrl}}/users/674c607b27f72e7fc1863aad
+
+### * test login
+POST {{baseUrl}}/users/login
+Content-Type: application/json
+
+{
+  "email": "melchor.mail",
+  "password": "pass"
+}
+
+### * test register
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "name": "Test SCOUT 3",
+  "userLevel" : "scout",
+  "email": "scout1.com",
+  "password": "testpassword",
+  "additionalDetails": {
+    "school": "EARIST",
+    "scoutNumber": "123581948"
+  },
+  "rank": "explorer"
+}
+
+### * test update
+PUT {{baseUrl}}/users/6742153ee9e5d8df2039ca96
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "userLevel" : "unitLeader",
+  "email": "parokyanimayonnaise@gmail.com",
+  "password": "yourpassword",
+  "additionalDetails": {
+    "school": "UCC",
+    "scoutNumber": "123456789"
+  },
+  "status": "approved"
+}
+
+### * test deletion of user by its id
+DELETE {{baseUrl}}/users/673237c2d019f44d4885084d
