@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import mongoose from "mongoose";
 import { residentRoutes } from "./src/routes/residentRoutes.js";
+import { userRoutes } from "./src/routes/userRoutes.js";
 
 let app = express();
 dotenv.config();
@@ -34,6 +35,7 @@ await connectMongoDB();
 app.use("/api/images", express.static("./public/images"));
 
 app.use("/api/residents", residentRoutes);
+app.use("/api/users", userRoutes);
 
 // * start server
 app.get("/", async (req, res) => {

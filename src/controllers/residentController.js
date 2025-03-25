@@ -1,6 +1,5 @@
 import { Resident } from "../models/residentModel.js";
 
-// Create a new resident
 const createResident = async (req, res) => {
   try {
     const newResident = new Resident(req.body);
@@ -17,7 +16,6 @@ const createResident = async (req, res) => {
   }
 };
 
-// Get all residents
 const getResidents = async (req, res) => {
   try {
     const residents = await Resident.find();
@@ -27,7 +25,6 @@ const getResidents = async (req, res) => {
   }
 };
 
-// Get a single resident by ID
 const getResident = async (req, res) => {
   try {
     const resident = await Resident.findById(req.params.id);
@@ -42,7 +39,6 @@ const getResident = async (req, res) => {
   }
 };
 
-// Update a resident by ID
 const updateResident = async (req, res) => {
   try {
     const updatedResident = await Resident.findByIdAndUpdate(
@@ -67,7 +63,6 @@ const updateResident = async (req, res) => {
   }
 };
 
-// Delete a resident by ID
 const deleteResident = async (req, res) => {
   try {
     const deletedResident = await Resident.findByIdAndDelete(req.params.id);
