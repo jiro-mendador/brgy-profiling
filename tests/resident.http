@@ -187,3 +187,6 @@ Content-Type: application/json
 
 ### * test deletion by its id
 DELETE {{baseUrl}}/residents/67e2a49d400e46938a3a8c67
+
+### * for reports
+GET {{baseUrl}}/residents/statistics

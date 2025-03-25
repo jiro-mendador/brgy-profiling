@@ -5,12 +5,14 @@ import {
   deleteResident,
   getResident,
   getResidents,
+  getResidentStatistics,
   updateResident,
 } from "../controllers/residentController.js";
 
 let residentRoutes = express.Router();
 
 residentRoutes.get("/", getResidents);
+residentRoutes.get("/statistics", getResidentStatistics);
 residentRoutes.get("/:id", getResident);
 
 residentRoutes.post("/", createResident);
