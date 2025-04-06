@@ -1,0 +1,12 @@
+open brgy-profiling folder on vs code
+
+ctrl + ~ on vs code to open terminal
+
+type cd be
+type npm i
+then type nodemon ./ or node ./
+
+then type cd ..
+type cd fe
+then npm i
+then npm run start
