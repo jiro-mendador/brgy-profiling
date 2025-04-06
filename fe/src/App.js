@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import Landing from "./components/Landing";
+import NewLanding from "./components/NewLanding";
 import Dashboard from "./components/Dashboard";
 import ResidentForm from "./components/ResidentList/ResidentForm";
 import SystemLogs from "./components/SystemLogs/SystemLogs";
@@ -93,7 +94,8 @@ function App() {
   const renderView = () => {
     switch (currentView) {
       case "landing":
-        return <Landing onLogin={handleLogin} />;
+        // return <Landing onLogin={handleLogin} />;
+        return <NewLanding onLogin={handleLogin} />;
 
       case "dashboard":
         return !isEditing ? (
@@ -111,15 +113,12 @@ function App() {
         return <SystemLogs onBack={() => setCurrentView("dashboard")} />;
 
       default:
-        return <Landing onLogin={handleLogin} />;
+        // return <Landing onLogin={handleLogin} />;
+        return <NewLanding onLogin={handleLogin} />;
     }
   };
 
-  return (
-    <div className="app">
-      {renderView()}
-    </div>
-  );
+  return <div className="app">{renderView()}</div>;
 }
 
 export default App;
