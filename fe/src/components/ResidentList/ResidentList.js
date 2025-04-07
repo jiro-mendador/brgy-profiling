@@ -394,7 +394,9 @@ function ResidentList({ onBack, onEditClick }) {
         return (
           searchMatch &&
           resident.additionalInfos?.some(
-            (info) => (info.dropout?.toLowerCase() !== "n/a" || info.dropout?.toLowerCase() !== "no")
+            (info) =>
+              info.outOfSchool?.toLowerCase() !== "n/a" &&
+              info.outOfSchool?.toLowerCase() !== "no"
           )
         );
       case "immigrant":
@@ -1071,10 +1073,13 @@ function ResidentList({ onBack, onEditClick }) {
                             </span>
                           )}
                           {resident.additionalInfos?.some(
-                            (info) => info.pwd?.toLowerCase() === "yes"
+                            (info) =>
+                              info.pwd?.toLowerCase() !== "n/a" &&
+                              info.pwd?.toLowerCase() !== "no"
                           ) && <span className="badge pwd">PWD</span>}
-                          {resident.additionalInfos?.some((info) =>
-                            info.ofwCountry?.trim()
+                          {resident.additionalInfos?.some(
+                            (info) =>
+                              info.ofwCountry?.trim().toLowerCase() !== "n/a"
                           ) && <span className="badge ofw">OFW</span>}
                           {resident.additionalInfos?.some(
                             (info) => info.soloParent?.toLowerCase() === "yes"
