@@ -394,7 +394,7 @@ function ResidentList({ onBack, onEditClick }) {
         return (
           searchMatch &&
           resident.additionalInfos?.some(
-            (info) => info.dropout?.toLowerCase() === "yes"
+            (info) => (info.dropout?.toLowerCase() !== "n/a" || info.dropout?.toLowerCase() !== "no")
           )
         );
       case "immigrant":
@@ -548,7 +548,7 @@ function ResidentList({ onBack, onEditClick }) {
                           </p>
                           <p>
                             Cluster: {resident.cluster} • Household:{" "}
-                            {resident.household}
+                            {resident.householdNo}
                           </p>
                         </div>
                         <div className="member-actions">
@@ -683,7 +683,7 @@ function ResidentList({ onBack, onEditClick }) {
                   <div key={index} className="filtered-members">
                     {resident.additionalInfos?.map(
                       (info, infoIdx) =>
-                        info.pwd?.toLowerCase() === "yes" && (
+                        info.pwd?.toLowerCase() !== "n/a" && (
                           <div key={infoIdx} className="filtered-member-card">
                             <div className="member-info">
                               <h4>{info.name}</h4>
@@ -694,7 +694,7 @@ function ResidentList({ onBack, onEditClick }) {
                               </p>
                               <p>
                                 Cluster: {resident.cluster} • Household:{" "}
-                                {resident.household}
+                                {resident.householdNo}
                               </p>
                             </div>
                             <div className="member-actions">
@@ -749,14 +749,14 @@ function ResidentList({ onBack, onEditClick }) {
                               <h4>{info.name}</h4>
                               <p>Status: OFW</p>
                               <p>Country: {info.ofwCountry}</p>
-                              <p>Years as OFW: {info.ofwYears}</p>
+                              <p>Years as OFW: {info.yearsInService}</p>
                               <p>
                                 From: {resident.headFirstName}{" "}
                                 {resident.headLastName}'s Family
                               </p>
                               <p>
                                 Cluster: {resident.cluster} • Household:{" "}
-                                {resident.household}
+                                {resident.householdNo}
                               </p>
                             </div>
                             <div className="member-actions">
@@ -816,7 +816,7 @@ function ResidentList({ onBack, onEditClick }) {
                               </p>
                               <p>
                                 Cluster: {resident.cluster} • Household:{" "}
-                                {resident.household}
+                                {resident.householdNo}
                               </p>
                             </div>
                             <div className="member-actions">
@@ -876,7 +876,7 @@ function ResidentList({ onBack, onEditClick }) {
                               </p>
                               <p>
                                 Cluster: {resident.cluster} • Household:{" "}
-                                {resident.household}
+                                {resident.householdNo}
                               </p>
                             </div>
                             <div className="member-actions">
@@ -925,7 +925,8 @@ function ResidentList({ onBack, onEditClick }) {
                   <div key={index} className="filtered-members">
                     {resident.additionalInfos?.map(
                       (info, infoIdx) =>
-                        info.dropout?.toLowerCase() === "yes" && (
+                        (info.outOfSchool?.toLowerCase() !== "no" ||
+                          info.outOfSchool?.toLowerCase() !== "no") && (
                           <div key={infoIdx} className="filtered-member-card">
                             <div className="member-info">
                               <h4>{info.name}</h4>
@@ -936,7 +937,7 @@ function ResidentList({ onBack, onEditClick }) {
                               </p>
                               <p>
                                 Cluster: {resident.cluster} • Household:{" "}
-                                {resident.household}
+                                {resident.householdNo}
                               </p>
                             </div>
                             <div className="member-actions">
@@ -991,14 +992,14 @@ function ResidentList({ onBack, onEditClick }) {
                               <h4>{info.name}</h4>
                               <p>Status: Immigrant</p>
                               <p>Nationality: {info.immigrantNationality}</p>
-                              <p>Years of Stay: {info.immigrantStay}</p>
+                              <p>Years of Stay: {info.yearsOfStay}</p>
                               <p>
                                 From: {resident.headFirstName}{" "}
                                 {resident.headLastName}'s Family
                               </p>
                               <p>
                                 Cluster: {resident.cluster} • Household:{" "}
-                                {resident.household}
+                                {resident.householdNo}
                               </p>
                             </div>
                             <div className="member-actions">

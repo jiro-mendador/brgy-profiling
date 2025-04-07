@@ -15,14 +15,25 @@ const registerUser = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    user = new User({
-      username,
-      email,
-      password: hashedPassword,
-      role,
-      editorType,
-      linkedResident: req.body.linkedResident,
-    });
+    if (req.body.linkedResident) {
+      user = new User({
+        username,
+        email,
+        password: hashedPassword,
+        role,
+        editorType,
+        linkedResident: req.body.linkedResident,
+      });
+    } else {
+      user = new User({
+        username,
+        email,
+        password: hashedPassword,
+        role,
+        editorType,
+      });
+    }
+
     await user.save();
 
     res.status(201).json({

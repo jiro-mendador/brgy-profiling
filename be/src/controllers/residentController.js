@@ -1,5 +1,6 @@
 import { Resident } from "../models/residentModel.js";
 import { User } from "../models/userModel.js";
+import { AuditLog } from "../models/systemLogModel.js";
 
 const getResidentStatistics = async (req, res) => {
   try {
@@ -177,28 +178,35 @@ const deleteResident = async (req, res) => {
   //   res.status(500).json({ success: false, error: error.message });
   // }
   try {
-    // Step 1: Delete the resident by ID
+    // Step 1: Delete the resident
     const deletedResident = await Resident.findByIdAndDelete(req.params.id);
     if (!deletedResident) {
-      return res
-        .status(404)
-        .json({ success: false, error: "Resident not found" });
+      return res.status(404).json({
+        success: false,
+        error: "Resident not found",
+      });
     }
 
-    // Step 2: Delete any documents in other collections that reference this resident ID
-    const deletedLinkedData = await User.deleteMany({
-      linkedResident: req.params.id, // Match documents where linkedResident matches the resident's ID
+    // Step 2: Find users linked to this resident
+    const linkedUsers = await User.find({ linkedResident: req.params.id });
+
+    // Step 3: Extract the IDs of those users
+    const linkedUserIds = linkedUsers.map((user) => user._id);
+
+    // Step 4: Delete those users
+    const deletedUsers = await User.deleteMany({ _id: { $in: linkedUserIds } });
+
+    // Step 5: Delete audit logs created by those users
+    const deletedLogs = await AuditLog.deleteMany({
+      user: { $in: linkedUserIds },
     });
 
-    // Optionally handle the case where no linked data was deleted
-    if (deletedLinkedData.deletedCount === 0) {
-      console.log("No linked data found to delete.");
-    }
-
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
-      message: "Resident and linked data deleted successfully",
+      message: "Resident, linked users, and audit logs deleted successfully",
       deletedResident,
+      deletedUsers: deletedUsers.deletedCount,
+      deletedLogs: deletedLogs.deletedCount,
     });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
