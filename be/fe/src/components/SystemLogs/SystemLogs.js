@@ -14,6 +14,12 @@ const SystemLogs = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedActivity, setSelectedActivity] = useState("All Activities");
   const [showActivityDropdown, setShowActivityDropdown] = useState(false);
+  // const [selectedDate, setSelectedDate] = useState(() => {
+  //   const today = new Date();
+  //   const tomorrow = new Date(today);
+  //   tomorrow.setDate(tomorrow.getDate() + 1);
+  //   return tomorrow.toISOString().split("T")[0];
+  // });
   const [selectedDate, setSelectedDate] = useState("");
   const [currentUser, setCurrentUser] = useState(null);
   const [showErrorModal, setShowErrorModal] = useState(false);
@@ -55,6 +61,27 @@ const SystemLogs = () => {
     }
   };
 
+  let filteredLogs = logs.filter((log) => {
+    // const user = typeof log.user === "string" ? log.user : "";
+    // const action = typeof log.action === "string" ? log.action : "";
+    // const module = typeof log.module === "string" ? log.module : "";
+
+    const user = log.user.username;
+    const action = log.action;
+    const module = log.module;
+
+    const matchesSearch =
+      user.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      action.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      module.toLowerCase().includes(searchQuery.toLowerCase());
+
+    const matchesActivity =
+      selectedActivity === "All Activities" ||
+      action.toUpperCase() === selectedActivity.toUpperCase();
+
+    return matchesSearch && matchesActivity;
+  });
+
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("currentUser"));
     setCurrentUser(user);
@@ -67,24 +94,47 @@ const SystemLogs = () => {
     getLogs();
   }, []);
 
+  useEffect(() => {
+    const fetchFilteredLogs = async () => {
+      const res = await axiosInstance.get("/system-logs");
+      const allLogs = res.data;
+
+      if (selectedDate) {
+        // const filtered = allLogs.filter(
+        //   (log) =>
+        //     new Date(log.timestamp).toISOString().split("T")[0] === selectedDate
+        // );
+        const filtered = allLogs.filter(
+          (log) =>
+            new Date(log.timestamp).toLocaleDateString("en-CA") === selectedDate
+        );
+        setLogs(filtered);
+      } else {
+        setLogs(allLogs);
+      }
+    };
+
+    fetchFilteredLogs();
+  }, [selectedDate]);
+
   const handleDateChange = async (e) => {
-    const date = e.target.value;
-    setSelectedDate(date);
-    // const storedLogs = JSON.parse(localStorage.getItem("systemLogs") || "[]");
-    const returnedLogsFromDB = await axiosInstance.get("/system-logs");
+    // const date = e.target.value;
+    setSelectedDate(e.target.value);
+    // // const storedLogs = JSON.parse(localStorage.getItem("systemLogs") || "[]");
+    // const returnedLogsFromDB = await axiosInstance.get("/system-logs");
 
-    let storedLogs = [];
+    // let storedLogs = [];
 
-    storedLogs = returnedLogsFromDB.data;
+    // storedLogs = returnedLogsFromDB.data;
 
-    if (date && storedLogs) {
-      const filteredLogs = storedLogs.filter(
-        (log) => new Date(log.timestamp).toISOString().split("T")[0] === date
-      );
-      setLogs(filteredLogs);
-    } else {
-      setLogs(storedLogs);
-    }
+    // if (date && storedLogs) {
+    //   filteredLogs = storedLogs.filter(
+    //     (log) => new Date(log.timestamp).toISOString().split("T")[0] === date
+    //   );
+    //   setLogs(filteredLogs);
+    // } else {
+    //   setLogs(storedLogs);
+    // }
   };
 
   const handleActivitySelect = (activity) => {
@@ -144,27 +194,6 @@ const SystemLogs = () => {
       toast.success("All System Activiy Logs Were Deleted Successfully!");
     }
   };
-
-  const filteredLogs = logs.filter((log) => {
-    // const user = typeof log.user === "string" ? log.user : "";
-    // const action = typeof log.action === "string" ? log.action : "";
-    // const module = typeof log.module === "string" ? log.module : "";
-
-    const user = log.user.username;
-    const action = log.action;
-    const module = log.module;
-
-    const matchesSearch =
-      user.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      action.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      module.toLowerCase().includes(searchQuery.toLowerCase());
-
-    const matchesActivity =
-      selectedActivity === "All Activities" ||
-      action.toUpperCase() === selectedActivity.toUpperCase();
-
-    return matchesSearch && matchesActivity;
-  });
 
   useEffect(() => {
     const handleClickOutside = (event) => {
