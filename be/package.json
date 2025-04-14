@@ -24,7 +24,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon app.js",
-    "build": "npm install --prefix ./fe && npm run build --prefix ./fe && npm intall"
+    "build": "npm install --prefix ./fe && npm run build --prefix ./fe && npm install"
   },
   "keywords": [],
   "author": "",
