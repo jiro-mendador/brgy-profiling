@@ -5,6 +5,7 @@ import { PERMISSIONS } from "../Permission/Permissions";
 import { UserContext } from "../../contexts/userContext";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { MAIN_API_LINK } from "../../utils/API";
 
 const UserModal = ({
   showModal,
@@ -28,7 +29,8 @@ const UserModal = ({
 
   const fetchResidents = async () => {
     try {
-      let response = await axios.get(`http://localhost:8080/api/residents`);
+      // let response = await axios.get(`http://localhost:8080/api/residents`);
+      let response = await axios.get(`${MAIN_API_LINK}/residents`);
 
       let fetchedResidents = response.data.data;
       console.log(fetchedResidents);
@@ -122,7 +124,9 @@ const UserModal = ({
       } else if (formData.role === "staff") {
         // For editors, ensure at least one permission is selected
         if (formData.permissions.length === 0) {
-          toast.warning("Please select at least one permission for Editor role");
+          toast.warning(
+            "Please select at least one permission for Editor role"
+          );
           return;
         } else {
           // Map each selected permission to a corresponding editor type

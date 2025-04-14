@@ -14,6 +14,7 @@ import axios from "axios";
 import axiosInstance from "../axios";
 import { ACTIONS } from "../utils/auditLogger";
 import { toast } from "react-toastify";
+import { MAIN_API_LINK } from "../utils/API";
 
 function Dashboard({ currentUser, onLogout }) {
   const [activeView, setActiveView] = useState("welcome");
@@ -86,7 +87,7 @@ function Dashboard({ currentUser, onLogout }) {
             isRegisteredVoter: info.isRegisteredVoter === "Registered",
           })),
         };
-        let response = await axios.put(`${url}/${editingID}`, modifiedData);
+        let response = await axios.put(`${MAIN_API_LINK}/residents/${editingID}`, modifiedData);
 
         if (response.data.success === true) {
           toast.success("Information updated successfully");
@@ -119,7 +120,7 @@ function Dashboard({ currentUser, onLogout }) {
       const deletingID = localStorage.getItem("deletingID");
       try {
         let url = "http://localhost:8080/api/residents";
-        let response = await axios.delete(`${url}/${deletingID}`);
+        let response = await axios.delete(`${MAIN_API_LINK}/residents/${deletingID}`);
         if (response.data.success === true) {
           toast.success("Information deleted successfully");
 

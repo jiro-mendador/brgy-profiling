@@ -10,6 +10,7 @@ import axiosInstance from "../../axios";
 import { UserContext } from "../../contexts/userContext.js";
 import ExportToPDF from "./ExportToPDF.js";
 import { toast } from "react-toastify";
+import { MAIN_API_LINK } from "../../utils/API.js";
 
 function formatDate(dateString) {
   if (!dateString) return "";
@@ -50,12 +51,16 @@ function ResidentList({ onBack, onEditClick }) {
       let fetchedResidents = [];
 
       if (currentUser.role === "user") {
+        // response = await axios.get(
+        //   `http://localhost:8080/api/residents/${currentUser.linkedResident}`
+        // );
         response = await axios.get(
-          `http://localhost:8080/api/residents/${currentUser.linkedResident}`
+          `${MAIN_API_LINK}/residents/${currentUser.linkedResident}`
         );
         fetchedResidents = [response.data.data];
       } else {
-        response = await axios.get(`http://localhost:8080/api/residents`);
+        // response = await axios.get(`http://localhost:8080/api/residents`);
+        response = await axios.get(`${MAIN_API_LINK}/residents`);
         fetchedResidents = response.data.data;
       }
 
@@ -257,7 +262,7 @@ function ResidentList({ onBack, onEditClick }) {
         if (window.confirm("Are you sure you want to delete this record?")) {
           try {
             let url = "http://localhost:8080/api/residents";
-            let response = await axios.delete(`${url}/${id}`);
+            let response = await axios.delete(`${MAIN_API_LINK}/residents/${id}`);
             if (response.data.success === true) {
               toast.success("Information deleted successfully");
               await axiosInstance.post("/system-logs", {
@@ -288,12 +293,15 @@ function ResidentList({ onBack, onEditClick }) {
       if (window.confirm("Are you sure you want to request for deletion?")) {
         try {
           let url = "http://localhost:8080/api/residents";
-          let response = await axios.put(`${url}/${deletionReasonID}`, {
-            deletion: {
-              requestedBy: currentUser.id,
-              reason: deletionReason,
-            },
-          });
+          let response = await axios.put(
+            `${MAIN_API_LINK}/residents/${deletionReasonID}`,
+            {
+              deletion: {
+                requestedBy: currentUser.id,
+                reason: deletionReason,
+              },
+            }
+          );
           console.log(response.data);
           if (response.data.success === true) {
             toast.success("Request for deletion sent!");
@@ -320,7 +328,9 @@ function ResidentList({ onBack, onEditClick }) {
       if (window.confirm("Are you sure you want to delete this record?")) {
         try {
           let url = "http://localhost:8080/api/residents";
-          let response = await axios.delete(`${url}/${deletionReasonID}`);
+          let response = await axios.delete(
+            `${MAIN_API_LINK}/residents/${deletionReasonID}`
+          );
           if (response.data.success === true) {
             toast.success("Information deleted successfully");
             await axiosInstance.post("/system-logs", {
@@ -355,7 +365,7 @@ function ResidentList({ onBack, onEditClick }) {
     if (window.confirm("Are you sure you want to reject deletion?")) {
       try {
         let url = "http://localhost:8080/api/residents";
-        let response = await axios.put(`${url}/${deletionReasonID}`, {
+        let response = await axios.put(`${MAIN_API_LINK}/residents/${deletionReasonID}`, {
           deletion: { requestedBy: null, reason: "" },
         });
         if (response.data.success === true) {
@@ -414,8 +424,11 @@ function ResidentList({ onBack, onEditClick }) {
       let response = null;
       let fetchedResidents = [];
 
+      // response = await axios.get(
+      //   `http://localhost:8080/api/residents?category=${e.target.value}`
+      // );
       response = await axios.get(
-        `http://localhost:8080/api/residents?category=${e.target.value}`
+        `${MAIN_API_LINK}/residents?category=${e.target.value}`
       );
       fetchedResidents = response.data.data;
 

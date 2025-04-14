@@ -5,6 +5,7 @@ import axios from "axios";
 import axiosInstance from "../../axios";
 import { UserContext } from "../../contexts/userContext.js";
 import { toast } from "react-toastify";
+import { MAIN_API_LINK } from "../../utils/API.js";
 
 function FamilyForm({ onBack }) {
   const { currentUser, setCurrentUser } = useContext(UserContext);
@@ -803,7 +804,7 @@ function FamilyForm({ onBack }) {
     try {
       let url = "http://localhost:8080/api/residents";
 
-      let response = await axios.post(url, data);
+      let response = await axios.post(`${MAIN_API_LINK}/residents`, data);
 
       if (response.data.success === true) {
         toast.success("Information saved successfully");

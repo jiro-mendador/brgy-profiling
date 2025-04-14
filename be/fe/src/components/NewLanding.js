@@ -6,6 +6,7 @@ import axios from "axios";
 import axiosInstance from "../axios";
 import { UserContext } from "../contexts/userContext.js";
 import { toast } from "react-toastify";
+import { MAIN_API_LINK } from "../utils/API.js";
 
 function NewLanding({ onLogin }) {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -54,7 +55,7 @@ function NewLanding({ onLogin }) {
       try {
         let url = "http://localhost:8080/api/users";
 
-        let response = await axios.post(url, {
+        let response = await axios.post(`${MAIN_API_LINK}/users`, {
           username: formData.username,
           email: formData.email,
           password: formData.password,
@@ -99,7 +100,7 @@ function NewLanding({ onLogin }) {
       try {
         let url = "http://localhost:8080/api/users/login";
 
-        let response = await axios.post(url, {
+        let response = await axios.post(`${MAIN_API_LINK}/users/login`, {
           email: formData.email,
           password: formData.password,
         });
