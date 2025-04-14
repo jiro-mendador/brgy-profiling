@@ -5,6 +5,14 @@ import mongoose from "mongoose";
 import { residentRoutes } from "./src/routes/residentRoutes.js";
 import { userRoutes } from "./src/routes/userRoutes.js";
 import { systemLogRoutes } from "./src/routes/systemLogRoutes.js";
+import { certificateRecordRoutes } from "./src/routes/certificateRoutes.js";
+
+// ! FOR WEB HOSTING
+import path from "path";
+import { fileURLToPath } from "url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+console.log(__dirname);
 
 let app = express();
 dotenv.config();
@@ -38,6 +46,15 @@ app.use("/api/images", express.static("./public/images"));
 app.use("/api/residents", residentRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/system-logs", systemLogRoutes);
+app.use("/api/certificates", certificateRecordRoutes);
+
+// ! TO RENDER FRONTEND ON WEB HOSTING
+app.use(express.static(path.join(__dirname, "/fe/build/")));
+
+// ! RENDER FRONTEND ON ANY PATH
+app.get("*", (req, res) =>
+  res.sendFile(path.join(__dirname, "/fe/build/index.html"))
+);
 
 // * start server
 app.get("/", async (req, res) => {

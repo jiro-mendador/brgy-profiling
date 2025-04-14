@@ -96,6 +96,14 @@ const ResidentSchema = new mongoose.Schema(
         residence: { type: Number, default: "" },
       },
     ],
+
+    deletion: {
+      requestedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+      reason: { type: String },
+    },
   },
   { timestamps: true }
 );

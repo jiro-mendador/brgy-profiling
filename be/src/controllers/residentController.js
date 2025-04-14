@@ -1,10 +1,86 @@
 import { Resident } from "../models/residentModel.js";
 import { User } from "../models/userModel.js";
 import { AuditLog } from "../models/systemLogModel.js";
+import { getCertificateReport } from "../controllers/certificateController.js";
 
 const getResidentStatistics = async (req, res) => {
   try {
-    const residents = await Resident.find();
+    const { filterType, filterValue } = req.query;
+    let certReports = [];
+    console.log(filterType, filterValue);
+
+    let startDate, endDate;
+    const currentYear = new Date().getFullYear();
+
+    switch (filterType) {
+      case "Yearly":
+        startDate = new Date(filterValue, 0, 1);
+        endDate = new Date(filterValue, 11, 31, 23, 59, 59);
+        certReports = await getCertificateReport({
+          year: filterValue,
+        });
+        break;
+      case "Monthly":
+        startDate = new Date(currentYear, filterValue - 1, 1);
+        endDate = new Date(currentYear, filterValue, 0, 23, 59, 59); // last day of the month
+        certReports = await getCertificateReport({
+          month: filterValue,
+        });
+        break;
+      case "Quarterly":
+        const quarter = parseInt(filterValue);
+        const startMonth = (quarter - 1) * 3;
+        startDate = new Date(currentYear, startMonth, 1);
+        endDate = new Date(currentYear, startMonth + 3, 0, 23, 59, 59);
+        certReports = await getCertificateReport({
+          quarter: filterValue,
+        });
+        break;
+      default:
+        // fallback: current month
+        const now = new Date();
+        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+        endDate = new Date(
+          now.getFullYear(),
+          now.getMonth() + 1,
+          0,
+          23,
+          59,
+          59
+        );
+        certReports = await getCertificateReport({
+          month: filterValue || new Date().getMonth() + 1,
+        });
+    }
+
+    const residents = await Resident.find({
+      createdAt: {
+        $gte: startDate,
+        $lte: endDate,
+      },
+    });
+
+    // switch (filterType) {
+    //   case "Yearly":
+    //     certReports = await getCertificateReport({
+    //       year: filterValue,
+    //     });
+    //     break;
+    //   case "Monthly":
+    //     certReports = await getCertificateReport({
+    //       month: filterValue,
+    //     });
+    //     break;
+    //   case "Quarterly":
+    //     certReports = await getCertificateReport({
+    //       quarter: filterValue,
+    //     });
+    //     break;
+    //   default:
+    //     certReports = await getCertificateReport({
+    //       month: filterValue || new Date().getMonth() + 1,
+    //     });
+    // }
 
     let totalPopulation = 0;
     let totalHouseholds = residents.length;
@@ -45,7 +121,7 @@ const getResidentStatistics = async (req, res) => {
 
       (resident.additionalInfos || []).forEach((info) => {
         if (info?.seniorCitizen?.toLowerCase() === "yes") seniorCount++;
-        if (info?.pwd?.toLowerCase() === "yes") pwdCount++;
+        if (info?.pwd?.toLowerCase() !== "n/a") pwdCount++;
         if (info?.soloParent?.toLowerCase() === "yes") soloParentCount++;
         if (info?.ofwCountry) ofwCount++;
         if (info?.immigrantNationality) immigrantCount++;
@@ -94,6 +170,7 @@ const getResidentStatistics = async (req, res) => {
             percentage: calculatePercentage(ageGroups["60+"]),
           },
         },
+        certReports,
       },
     });
   } catch (error) {
@@ -118,7 +195,7 @@ const createResident = async (req, res) => {
 
 const getResidents = async (req, res) => {
   try {
-    const residents = await Resident.find();
+    const residents = await Resident.find().sort({ headLastName: 1 });
     res.status(200).json({ success: true, data: residents });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
@@ -154,6 +231,28 @@ const updateResident = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "Resident updated successfully",
+      data: updatedResident,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+const updateRequestForDeletion = async (req, res) => {
+  try {
+    const updatedResident = await Resident.findByIdAndUpdate(
+      req.params.requestDeletionID,
+      req.body,
+      { new: true, runValidators: true }
+    );
+    if (!updatedResident) {
+      return res
+        .status(404)
+        .json({ success: false, error: "Resident not found" });
+    }
+    res.status(200).json({
+      success: true,
+      message: "Request for deletion sent!",
       data: updatedResident,
     });
   } catch (error) {
@@ -220,4 +319,5 @@ export {
   updateResident,
   deleteResident,
   getResidentStatistics,
+  updateRequestForDeletion,
 };
