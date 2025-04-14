@@ -3,6 +3,7 @@ import React, { useState, useEffect, useContext } from "react";
 import "./css/style.css"
 import axios from "axios";
 import { ResidentContext } from "../../contexts/residentContext";
+import { MAIN_API_LINK } from "../../utils/API";
 
 const yesNoOptions = ["", "Yes", "No"];
 const sexOptions = ["", "Male", "Female"];
@@ -372,8 +373,11 @@ function ResidentForm({ onBack, onSave }) {
     if (!editingID) return; // If no ID, do nothing
 
     try {
+      // const response = await axios.get(
+      //   `http://localhost:8080/api/residents/${editingID}`
+      // );
       const response = await axios.get(
-        `http://localhost:8080/api/residents/${editingID}`
+        `${MAIN_API_LINK}/residents/${editingID}`
       );
       let resident = response.data.data;
       console.log("Fetched editing resident:", resident);

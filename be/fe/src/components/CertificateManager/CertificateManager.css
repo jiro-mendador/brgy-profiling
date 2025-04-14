@@ -1,5 +1,4 @@
 /* Enhanced Certificate Manager Styles */
-
 .certificate-manager-container {
   max-width: 1280px;
   margin: 0 auto;
@@ -35,6 +34,8 @@
 
 /* Enhanced Search Box */
 .search-container {
+  /* width:100%; */
+  /* width:min-content; */
   margin-bottom: 2.5rem;
 }
 
@@ -45,10 +46,12 @@
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
   display: flex;
   align-items: center;
-  max-width: 600px;
+  /* max-width: 600px; */
   margin: 0 auto;
   border: 2px solid #e2e8f0;
   transition: all 0.3s ease;
+  width: 100%;
+  min-width: 1rem;
 }
 
 .search-box:focus-within {
@@ -76,6 +79,13 @@
   margin-right: 1rem;
 }
 
+@media screen and (max-width: 500px) {
+  .search-icon {
+    display: none;
+    margin-right: 0;
+  }
+}
+
 .search-box:focus-within .search-icon {
   color: #2563eb;
 }
@@ -86,6 +96,7 @@
   flex-direction: column;
   gap: 1.5rem;
   animation: slideUp 0.4s ease-out;
+  width: 100%;
 }
 
 .document-section {
@@ -95,6 +106,7 @@
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
   border: 1px solid #e2e8f0;
   transition: all 0.3s ease;
+  width: 100%;
 }
 
 .document-section:hover {
@@ -136,7 +148,7 @@
   display: flex;
   flex-flow: column nowrap;
   /* align-items: center; */
-  gap:1rem;
+  gap: 1rem;
   padding: 1.25rem;
   background: white;
   border: 1px solid #e2e8f0;
@@ -171,9 +183,11 @@
 
 /* Enhanced Document Icons and Details */
 .document-icon {
-  display:flex;
-  flex-flow:row;
+  display: flex;
+  flex-flow: row wrap;
   align-items: center;
+  justify-content: center;
+  gap: 1rem;
 
   padding: 0.75rem;
   background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
@@ -201,9 +215,10 @@
   transition: color 0.3s ease;
 }
 
-.document-item:hover .document-details h4, .document-item:hover .document-details p {
+.document-item:hover .document-details h4,
+.document-item:hover .document-details p {
   /* color: #2563eb; */
-  color:white;
+  color: white;
 }
 
 .document-details p {
@@ -211,6 +226,12 @@
   font-size: 0.875rem;
   color: #64748b;
   line-height: 1.5;
+}
+
+@media screen and (max-width: 450px) {
+  .document-details p {
+    display: none;
+  }
 }
 
 .document-category {
@@ -240,7 +261,7 @@
   justify-content: center;
   /* width: 2.5rem;
   height: 2.5rem; */
-  width:max-content;
+  width: max-content;
   padding: 1rem;
   border: none;
   border-radius: 10px;
@@ -342,13 +363,13 @@
 }
 
 /* Enhanced Responsive Design */
-@media (max-width: 1024px) {
+/* @media (max-width: 1024px) {
   .certificate-manager-container {
     padding: 2rem;
   }
-}
+} */
 
-@media (max-width: 768px) {
+/* @media (max-width: 768px) {
   .certificate-manager-container {
     padding: 1.5rem;
   }
@@ -392,10 +413,10 @@
     height: 3rem;
     border-radius: 8px;
   }
-}
+} */
 
 /* Enhanced Print Styles */
-@media print {
+/* @media print {
   .certificate-manager-container {
     background: white;
     padding: 0;
@@ -416,12 +437,12 @@
   .document-item {
     break-inside: avoid;
   }
-}
+} */
 
 .certificate-inputs-div {
-  display:flex;
+  display: flex;
   flex-flow: column nowrap;
-  gap:1rem;
+  gap: 1rem;
 
   padding: 1rem;
   border-radius: 15px;
@@ -429,21 +450,22 @@
 }
 
 .certificate-inputs-div > div {
-  display:flex;
+  display: flex;
   flex-flow: column nowrap;
-  gap:1rem;
+  gap: 1rem;
 }
 
-.certificate-inputs-div > div > input, .certificate-inputs-div > div > textarea {
-  border-radius:15px;
+.certificate-inputs-div > div > input,
+.certificate-inputs-div > div > textarea {
+  border-radius: 15px;
 }
 
 .certificate-inputs-div > div > label {
-  font-weight:600;
-  font-size:0.85rem;
+  font-weight: 600;
+  font-size: 0.85rem;
 }
 .certificate-inputs-div > div .hint {
-  font-weight:500;
-  font-size:0.75rem;
-  color:#2563eb;
+  font-weight: 500;
+  font-size: 0.75rem;
+  color: #2563eb;
 }

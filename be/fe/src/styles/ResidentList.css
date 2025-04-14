@@ -108,10 +108,12 @@
 
 .member-details {
   display: flex;
+  flex-flow:row wrap;
   gap: 0.75rem;
   color: #6b7280;
   font-size: 0.95rem;
   align-items: center;
+  margin-bottom:1rem;
 }
 
 /* Filtered Members */
@@ -485,19 +487,13 @@
     gap: 1rem;
   }
 
-  .member-actions {
-    width: 100%;
-    display: flex;
-    gap: 0.5rem;
-  }
-
   .dropdown-arrow {
     right: 1rem;
   }
 }
 
 .deletion-req-div {
-  margin:1rem;
+  margin: 1rem;
 
   position: fixed;
   top: 50%;
@@ -519,12 +515,10 @@
   gap: 1rem;
 }
 
-
 .deletion-req-div > div {
-  display:flex;
-  flex-flow:row wrap;
-  gap:1rem;
-  min-width:20rem;
+  display: flex;
+  flex-flow: row wrap;
+  gap: 1rem;
 }
 
 .deletion-req-div > label {
@@ -548,4 +542,18 @@
 
 .deletion-req-div button:nth-child(3) {
   background-color: #4b5563;
+}
+
+.member-actions {
+  display: flex;
+  flex-flow: row wrap;
+  gap: 1rem;
+}
+
+@media screen and (max-width: 520px) {
+  .member-actions {
+    margin-top: 1rem;
+    flex-flow: column nowrap;
+    width: 100%;
+  }
 }

@@ -336,7 +336,7 @@ const ExportToExcel = ({ data, label, icon, type }) => {
     if (type) {
       saveAs(fileData, type + " " + fileName + `-${formatted}.xlsx`);
     } else {
-      alert()
+      // alert()
       saveAs(fileData, fileName + `-${formatted}.xlsx`);
     }
 

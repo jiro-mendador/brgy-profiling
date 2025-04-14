@@ -10,11 +10,13 @@ import SystemLogs from "./SystemLogs/SystemLogs";
 import { checkPermission, PERMISSIONS } from "./Permission/Permissions";
 import PermissionErrorModal from "./Permission/PermissionErrorModal";
 import "../styles/dashboard.css";
+import "../styles/dashboard-media-query.css";
 import axios from "axios";
 import axiosInstance from "../axios";
 import { ACTIONS } from "../utils/auditLogger";
 import { toast } from "react-toastify";
 import { MAIN_API_LINK } from "../utils/API";
+import { useEffect } from "react";
 
 function Dashboard({ currentUser, onLogout }) {
   const [activeView, setActiveView] = useState("welcome");
@@ -22,6 +24,24 @@ function Dashboard({ currentUser, onLogout }) {
   const [isEditing, setIsEditing] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+
+  const [width, setWidth] = useState(window.innerWidth);
+  const [showTopBar, setShowTopBar] = useState(true);
+
+  useEffect(() => {
+    const handleResize = () => setWidth(window.innerWidth);
+
+    if (window.innerWidth <= 700) {
+      setShowTopBar(false);
+    } else {
+      setShowTopBar(true);
+    }
+
+    console.log(window.innerWidth);
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [width]);
 
   const handlePermissionError = () => {
     setShowErrorModal(true);
@@ -87,7 +107,10 @@ function Dashboard({ currentUser, onLogout }) {
             isRegisteredVoter: info.isRegisteredVoter === "Registered",
           })),
         };
-        let response = await axios.put(`${MAIN_API_LINK}/residents/${editingID}`, modifiedData);
+        let response = await axios.put(
+          `${MAIN_API_LINK}/residents/${editingID}`,
+          modifiedData
+        );
 
         if (response.data.success === true) {
           toast.success("Information updated successfully");
@@ -120,7 +143,9 @@ function Dashboard({ currentUser, onLogout }) {
       const deletingID = localStorage.getItem("deletingID");
       try {
         let url = "http://localhost:8080/api/residents";
-        let response = await axios.delete(`${MAIN_API_LINK}/residents/${deletingID}`);
+        let response = await axios.delete(
+          `${MAIN_API_LINK}/residents/${deletingID}`
+        );
         if (response.data.success === true) {
           toast.success("Information deleted successfully");
 
@@ -193,25 +218,37 @@ function Dashboard({ currentUser, onLogout }) {
   return (
     <div className="menu-container">
       <div className="dashboard-navbar">
-        <div className="navbar-brand">
-          <img
-            src="/images/system-logo.png"
-            alt="System Logo"
-            className="navbar-logo"
-            style={{ height: "80px", marginRight: "20px" }}
-          />
-          <span>Profiling System</span>
-        </div>
-        <div className="navbar-actions">
-          <div className="user-info">
-            <i className="fas fa-user-circle"></i>
-            <span>{currentUser.username}</span>
+        {showTopBar && (
+          <div className="navbar-brand">
+            <img
+              src="/images/system-logo.png"
+              alt="System Logo"
+              className="navbar-logo"
+              style={{ height: "80px", marginRight: "20px" }}
+            />
+            <span>Profiling System</span>
           </div>
-          <button onClick={onLogout} className="logout-btn">
-            <i className="fas fa-sign-out-alt"></i>
-            Logout
-          </button>
-        </div>
+        )}
+        {showTopBar && (
+          <>
+            <div className="navbar-actions">
+              <div className="user-info">
+                <i className="fas fa-user-circle"></i>
+                <span>{currentUser.username}</span>
+              </div>
+              <button onClick={onLogout} className="logout-btn">
+                <i className="fas fa-sign-out-alt"></i>
+                Logout
+              </button>
+            </div>
+          </>
+        )}
+        <button
+          className="top-bar"
+          onClick={() => setShowTopBar((prev) => !prev)}
+        >
+          |||
+        </button>
       </div>
 
       <div className="dashboard-content">

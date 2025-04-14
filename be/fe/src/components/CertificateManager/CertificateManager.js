@@ -75,7 +75,8 @@ const CertificateManager = () => {
 
   const [brgyCertData, setBrgyCertData] = useState({
     name: "",
-    age: "",
+    // age: "",
+    birthday: "",
     parents: "",
     purpose: "",
     dateOfIssuance: "",
@@ -667,8 +668,16 @@ const CertificateManager = () => {
       });
       setBrgyCertData({
         name: "",
-        age: "",
+        birthday: "",
+        // age: "",
         parents: "",
+        purpose: "",
+        dateOfIssuance: "",
+        validUntil: "",
+      });
+      setHealthData({
+        name: "",
+        age: "",
         purpose: "",
         dateOfIssuance: "",
         validUntil: "",
@@ -1314,6 +1323,15 @@ const CertificateManager = () => {
                 type="text"
                 name="name"
                 value={brgyCertData.name}
+                onChange={handleBrgyCertInputChange}
+              />
+            </div>
+            <div>
+              <label>Birthday:</label>
+              <input
+                type="date"
+                name="birthday"
+                value={brgyCertData.birthday}
                 onChange={handleBrgyCertInputChange}
               />
             </div>
