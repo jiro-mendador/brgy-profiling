@@ -11,6 +11,7 @@ import { UserContext } from "../../contexts/userContext.js";
 import ExportToPDF from "./ExportToPDF.js";
 import { toast } from "react-toastify";
 import { MAIN_API_LINK } from "../../utils/API.js";
+import { CustomToast } from "../../utils/CustomToast.js";
 
 function formatDate(dateString) {
   if (!dateString) return "";
@@ -259,26 +260,51 @@ function ResidentList({ onBack, onEditClick }) {
         setShowDeletionRequest(true);
         setDeletionReasonID(id);
       } else {
-        if (window.confirm("Are you sure you want to delete this record?")) {
-          try {
-            let url = "http://localhost:8080/api/residents";
-            let response = await axios.delete(`${MAIN_API_LINK}/residents/${id}`);
-            if (response.data.success === true) {
-              toast.success("Information deleted successfully");
-              await axiosInstance.post("/system-logs", {
-                action: ACTIONS.DELETE,
-                module: "Resident List",
-                user: currentUser.id,
-                details: `User ${currentUser.username} deleted a resident information: ${response.data.deletedResident.headFirstName} ${response.data.deletedResident.headLastName}`,
-              });
-              await fetchResidents();
-            }
-          } catch (error) {
-            toast.error(error.response.data.error);
-            console.log(error.response.data);
-          }
-        }
+        showCustomToast(
+          () => confirmFunc(id),
+          "Are you sure you want to delete this record?"
+        );
+        // if (window.confirm("Are you sure you want to delete this record?")) {
+        //   try {
+        //     let url = "http://localhost:8080/api/residents";
+        //     let response = await axios.delete(
+        //       `${MAIN_API_LINK}/residents/${id}`
+        //     );
+        //     if (response.data.success === true) {
+        //       toast.success("Information deleted successfully");
+        //       await axiosInstance.post("/system-logs", {
+        //         action: ACTIONS.DELETE,
+        //         module: "Resident List",
+        //         user: currentUser.id,
+        //         details: `User ${currentUser.username} deleted a resident information: ${response.data.deletedResident.headFirstName} ${response.data.deletedResident.headLastName}`,
+        //       });
+        //       await fetchResidents();
+        //     }
+        //   } catch (error) {
+        //     toast.error(error.response.data.error);
+        //     console.log(error.response.data);
+        //   }
+        // }
       }
+    }
+  };
+
+  const confirmFunc = async (id) => {
+    try {
+      let response = await axios.delete(`${MAIN_API_LINK}/residents/${id}`);
+      if (response.data.success === true) {
+        toast.success("Information deleted successfully");
+        await axiosInstance.post("/system-logs", {
+          action: ACTIONS.DELETE,
+          module: "Resident List",
+          user: currentUser.id,
+          details: `User ${currentUser.username} deleted a resident information: ${response.data.deletedResident.headFirstName} ${response.data.deletedResident.headLastName}`,
+        });
+        await fetchResidents();
+      }
+    } catch (error) {
+      toast.error(error.response.data.error);
+      console.log(error.response.data);
     }
   };
 
@@ -289,69 +315,143 @@ function ResidentList({ onBack, onEditClick }) {
       setShowErrorModal(true);
       return;
     }
+
+    const reset = () => {
+      setShowDeletionRequest(false);
+      setDeletionReason("");
+      setDeletionReasonID("");
+    };
+
     if (currentUser.role !== "systemadmin") {
-      if (window.confirm("Are you sure you want to request for deletion?")) {
-        try {
-          let url = "http://localhost:8080/api/residents";
-          let response = await axios.put(
-            `${MAIN_API_LINK}/residents/${deletionReasonID}`,
-            {
-              deletion: {
-                requestedBy: currentUser.id,
-                reason: deletionReason,
-              },
+      // if (window.confirm("Are you sure you want to request for deletion?")) {
+      //   try {
+      //     let url = "http://localhost:8080/api/residents";
+      //     let response = await axios.put(
+      //       `${MAIN_API_LINK}/residents/${deletionReasonID}`,
+      //       {
+      //         deletion: {
+      //           requestedBy: currentUser.id,
+      //           reason: deletionReason,
+      //         },
+      //       }
+      //     );
+      //     console.log(response.data);
+      //     if (response.data.success === true) {
+      //       toast.success("Request for deletion sent!");
+      //       await axiosInstance.post("/system-logs", {
+      //         action: ACTIONS.EDIT,
+      //         module: "Resident List",
+      //         user: currentUser.id,
+      //         details: `User ${currentUser.username} request deletion for resident: ${response.data.data.headFirstName} ${response.data.data.headLastName}`,
+      //       });
+      //       await fetchResidents();
+      //       setShowDeletionRequest(false);
+      //       setDeletionReason("");
+      //       setDeletionReasonID("");
+      //     }
+      //   } catch (error) {
+      //     toast.error(error.response.data.error);
+      //     console.log(error.response.data);
+      //     setShowDeletionRequest(false);
+      //     setDeletionReason("");
+      //     setDeletionReasonID("");
+      //   }
+      // }
+      showCustomToast(
+        async () => {
+          try {
+            let response = await axios.put(
+              `${MAIN_API_LINK}/residents/${deletionReasonID}`,
+              {
+                deletion: {
+                  requestedBy: currentUser.id,
+                  reason: deletionReason,
+                },
+              }
+            );
+            console.log(response.data);
+            if (response.data.success === true) {
+              toast.success("Request for deletion sent!");
+              await axiosInstance.post("/system-logs", {
+                action: ACTIONS.EDIT,
+                module: "Resident List",
+                user: currentUser.id,
+                details: `User ${currentUser.username} request deletion for resident: ${response.data.data.headFirstName} ${response.data.data.headLastName}`,
+              });
+              await fetchResidents();
+              setShowDeletionRequest(false);
+              setDeletionReason("");
+              setDeletionReasonID("");
             }
-          );
-          console.log(response.data);
-          if (response.data.success === true) {
-            toast.success("Request for deletion sent!");
-            await axiosInstance.post("/system-logs", {
-              action: ACTIONS.EDIT,
-              module: "Resident List",
-              user: currentUser.id,
-              details: `User ${currentUser.username} request deletion for resident: ${response.data.data.headFirstName} ${response.data.data.headLastName}`,
-            });
-            await fetchResidents();
+          } catch (error) {
+            toast.error(error.response.data.error);
+            console.log(error.response.data);
             setShowDeletionRequest(false);
             setDeletionReason("");
             setDeletionReasonID("");
           }
-        } catch (error) {
-          toast.error(error.response.data.error);
-          console.log(error.response.data);
-          setShowDeletionRequest(false);
-          setDeletionReason("");
-          setDeletionReasonID("");
-        }
-      }
+        },
+        "Are you sure you want to request for deletion?",
+        () => reset()
+      );
     } else {
-      if (window.confirm("Are you sure you want to delete this record?")) {
-        try {
-          let url = "http://localhost:8080/api/residents";
-          let response = await axios.delete(
-            `${MAIN_API_LINK}/residents/${deletionReasonID}`
-          );
-          if (response.data.success === true) {
-            toast.success("Information deleted successfully");
-            await axiosInstance.post("/system-logs", {
-              action: ACTIONS.DELETE,
-              module: "Resident List",
-              user: currentUser.id,
-              details: `User ${currentUser.username} deleted a resident information: ${response.data.deletedResident.headFirstName} ${response.data.deletedResident.headLastName}`,
-            });
-            await fetchResidents();
+      // if (window.confirm("Are you sure you want to delete this record?")) {
+      //   try {
+      //     let url = "http://localhost:8080/api/residents";
+      //     let response = await axios.delete(
+      //       `${MAIN_API_LINK}/residents/${deletionReasonID}`
+      //     );
+      //     if (response.data.success === true) {
+      //       toast.success("Information deleted successfully");
+      //       await axiosInstance.post("/system-logs", {
+      //         action: ACTIONS.DELETE,
+      //         module: "Resident List",
+      //         user: currentUser.id,
+      //         details: `User ${currentUser.username} deleted a resident information: ${response.data.deletedResident.headFirstName} ${response.data.deletedResident.headLastName}`,
+      //       });
+      //       await fetchResidents();
+      //       setShowDeletionRequest(false);
+      //       setDeletionReason("");
+      //       setDeletionReasonID("");
+      //     }
+      //   } catch (error) {
+      //     toast.error(error.response.data.error);
+      //     console.log(error.response.data);
+      //     setShowDeletionRequest(false);
+      //     setDeletionReason("");
+      //     setDeletionReasonID("");
+      //   }
+      // }
+      showCustomToast(
+        async () => {
+          try {
+            let response = await axios.delete(
+              `${MAIN_API_LINK}/residents/${deletionReasonID}`
+            );
+            if (response.data.success === true) {
+              toast.success("Information deleted successfully");
+              await axiosInstance.post("/system-logs", {
+                action: ACTIONS.DELETE,
+                module: "Resident List",
+                user: currentUser.id,
+                details: `User ${currentUser.username} deleted a resident information: ${response.data.deletedResident.headFirstName} ${response.data.deletedResident.headLastName}`,
+              });
+              await fetchResidents();
+              setShowDeletionRequest(false);
+              setDeletionReason("");
+              setDeletionReasonID("");
+            }
+          } catch (error) {
+            toast.error(error.response.data.error);
+            console.log(error.response.data);
             setShowDeletionRequest(false);
             setDeletionReason("");
             setDeletionReasonID("");
           }
-        } catch (error) {
-          toast.error(error.response.data.error);
-          console.log(error.response.data);
-          setShowDeletionRequest(false);
-          setDeletionReason("");
-          setDeletionReasonID("");
-        }
-      }
+        },
+        "Are you sure you want to delete this record?",
+        () => reset()
+      );
     }
   };
 
@@ -362,33 +462,76 @@ function ResidentList({ onBack, onEditClick }) {
       setShowErrorModal(true);
       return;
     }
-    if (window.confirm("Are you sure you want to reject deletion?")) {
-      try {
-        let url = "http://localhost:8080/api/residents";
-        let response = await axios.put(`${MAIN_API_LINK}/residents/${deletionReasonID}`, {
-          deletion: { requestedBy: null, reason: "" },
-        });
-        if (response.data.success === true) {
-          toast.success("Information updated successfully");
-          await axiosInstance.post("/system-logs", {
-            action: ACTIONS.EDIT,
-            module: "Resident List",
-            user: currentUser.id,
-            details: `User ${currentUser.username} rejected information deletion of : ${response.data.data.headFirstName} ${response.data.data.headLastName}`,
-          });
-          await fetchResidents();
+    // if (window.confirm("Are you sure you want to reject deletion?")) {
+    //   try {
+    //     let url = "http://localhost:8080/api/residents";
+    //     let response = await axios.put(
+    //       `${MAIN_API_LINK}/residents/${deletionReasonID}`,
+    //       {
+    //         deletion: { requestedBy: null, reason: "" },
+    //       }
+    //     );
+    //     if (response.data.success === true) {
+    //       toast.success("Information updated successfully");
+    //       await axiosInstance.post("/system-logs", {
+    //         action: ACTIONS.EDIT,
+    //         module: "Resident List",
+    //         user: currentUser.id,
+    //         details: `User ${currentUser.username} rejected information deletion of : ${response.data.data.headFirstName} ${response.data.data.headLastName}`,
+    //       });
+    //       await fetchResidents();
+    //       setShowDeletionRequest(false);
+    //       setDeletionReason("");
+    //       setDeletionReasonID("");
+    //     }
+    //   } catch (error) {
+    //     toast.error(error.response.data.error);
+    //     console.log(error.response.data);
+    //     setShowDeletionRequest(false);
+    //     setDeletionReason("");
+    //     setDeletionReasonID("");
+    //   }
+    // }
+
+    const reset = () => {
+      setShowDeletionRequest(false);
+      setDeletionReason("");
+      setDeletionReasonID("");
+    };
+
+    showCustomToast(
+      async () => {
+        try {
+          let response = await axios.put(
+            `${MAIN_API_LINK}/residents/${deletionReasonID}`,
+            {
+              deletion: { requestedBy: null, reason: "" },
+            }
+          );
+          if (response.data.success === true) {
+            toast.success("Information updated successfully");
+            await axiosInstance.post("/system-logs", {
+              action: ACTIONS.EDIT,
+              module: "Resident List",
+              user: currentUser.id,
+              details: `User ${currentUser.username} rejected information deletion of : ${response.data.data.headFirstName} ${response.data.data.headLastName}`,
+            });
+            await fetchResidents();
+            setShowDeletionRequest(false);
+            setDeletionReason("");
+            setDeletionReasonID("");
+          }
+        } catch (error) {
+          toast.error(error.response.data.error);
+          console.log(error.response.data);
           setShowDeletionRequest(false);
           setDeletionReason("");
           setDeletionReasonID("");
         }
-      } catch (error) {
-        toast.error(error.response.data.error);
-        console.log(error.response.data);
-        setShowDeletionRequest(false);
-        setDeletionReason("");
-        setDeletionReasonID("");
-      }
-    }
+      },
+      "Are you sure you want to reject deletion?",
+      () => reset()
+    );
   };
 
   const handleSave = (editedResident) => {
@@ -550,6 +693,14 @@ function ResidentList({ onBack, onEditClick }) {
   //       console.log("HOLDER", holder);
   //     }
   //   });
+
+  const showCustomToast = (cf, text, cancelF) => {
+    if (cancelF) {
+      toast(<CustomToast text={text} confirmFunc={cf} cancelFunc={cancelF} />);
+    } else {
+      toast(<CustomToast text={text} confirmFunc={cf} />);
+    }
+  };
 
   const filteredResidents = residents
     .filter((resident) => {

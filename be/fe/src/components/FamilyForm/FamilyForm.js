@@ -540,9 +540,43 @@ function FamilyForm({ onBack }) {
 
   // Handle numeric input validation for ID numbers
 
+  // useEffect(() => {
+  //   setShowFamilyMembers(formData.totalMembers > 0);
+  //   let membersWithOutParents = formData.totalMembers - 2;
+  //   if (formData.totalMembers && formData.totalMembers > 2) {
+  //     let currentFamMemsLength = familyMembers.length;
+  //     if (membersWithOutParents > 0) {
+  //       setFamilyMembers((prev) => {
+  //         if (currentFamMemsLength < membersWithOutParents) {
+  //           let diff = membersWithOutParents - currentFamMemsLength;
+  //           let holder = [];
+  //           for (let i = 0; i < diff; i++) {
+  //             holder.push(familyMember);
+  //           }
+  //           return [...familyMembers, ...holder];
+  //         } else if (currentFamMemsLength > membersWithOutParents) {
+  //           let holder = [];
+  //           for (let i = 0; i < membersWithOutParents; i++) {
+  //             holder.push(familyMember);
+  //           }
+  //           return [...holder];
+  //         } else {
+  //           return [...familyMembers];
+  //         }
+  //       });
+  //     }
+  //   } else if (formData.totalMembers && formData.totalMembers < 2) {
+  //     toast.error("Total Members Cannot Be Lower Than Two (2) (Parents)");
+  //   } else {
+  //     setFamilyMembers([]);
+  //   }
+  // }, [formData.totalMembers]);
+
+
   useEffect(() => {
     setShowFamilyMembers(formData.totalMembers > 0);
     let membersWithOutParents = formData.totalMembers - 2;
+
     if (formData.totalMembers && formData.totalMembers > 2) {
       let currentFamMemsLength = familyMembers.length;
       if (membersWithOutParents > 0) {
@@ -551,13 +585,15 @@ function FamilyForm({ onBack }) {
             let diff = membersWithOutParents - currentFamMemsLength;
             let holder = [];
             for (let i = 0; i < diff; i++) {
-              holder.push(familyMember);
+              // Create a new object for each new member
+              holder.push({ ...familyMember }); // Using spread to create a new object
             }
             return [...familyMembers, ...holder];
           } else if (currentFamMemsLength > membersWithOutParents) {
             let holder = [];
             for (let i = 0; i < membersWithOutParents; i++) {
-              holder.push(familyMember);
+              // Create a new object for each new member
+              holder.push({ ...familyMember }); // Using spread to create a new object
             }
             return [...holder];
           } else {
@@ -571,6 +607,9 @@ function FamilyForm({ onBack }) {
       setFamilyMembers([]);
     }
   }, [formData.totalMembers]);
+
+
+
 
   const handleNumericInput = (event, setter, field, value) => {
     // If the value is empty or matches numeric pattern, update the state

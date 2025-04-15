@@ -8,6 +8,8 @@ import "./SystemLogs.css";
 import PermissionErrorModal from "../Permission/PermissionErrorModal";
 import axiosInstance from "../../axios";
 import { toast } from "react-toastify";
+import { CustomToast } from "../../utils/CustomToast";
+import * as XLSX from "xlsx-js-style";
 
 const SystemLogs = () => {
   const [logs, setLogs] = useState([]);
@@ -147,35 +149,131 @@ const SystemLogs = () => {
       setShowErrorModal(true);
       return;
     }
-    const csvRows = [];
-    const headers = ["Timestamp", "User", "Action", "Module"];
-    csvRows.push(headers.join(","));
 
-    filteredLogs.forEach((log) => {
-      const row = [
-        new Date(log.timestamp).toLocaleString(),
-        log.user.username,
-        log.details,
-        log.module,
-      ].map((field) => `"${(field?.toString() || "").replace(/"/g, '""')}"`);
-      csvRows.push(row.join(","));
+    const logs = filteredLogs.map((log) => ({
+      Timestamp: new Date(log.timestamp).toLocaleString(),
+      User: log.user.username,
+      Action: log.details,
+      Module: log.module,
+    }));
+
+    // Create worksheet without header
+    const worksheet = XLSX.utils.json_to_sheet(logs, { skipHeader: true });
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "System Logs");
+
+    const headers = ["Timestamp", "User", "Action", "Module"];
+
+    // Header style
+    const headerStyle = {
+      fill: { fgColor: { rgb: "1F53DD" } }, // Blue background
+      font: { color: { rgb: "FFFFFF" }, bold: true }, // White bold font
+      alignment: { horizontal: "center", vertical: "center" },
+    };
+
+    const dataStyle = {
+      fill: {
+        patternType: "solid",
+        fgColor: { rgb: "FFF2F2F2" }, // Light gray
+      },
+      font: {
+        color: { rgb: "FF000000" }, // Black
+      },
+      alignment: {
+        horizontal: "left",
+        vertical: "center",
+      },
+    };
+
+    // Manually set headers with styles
+    headers.forEach((headerText, colIdx) => {
+      const cellAddress = XLSX.utils.encode_cell({ r: 0, c: colIdx });
+      worksheet[cellAddress] = {
+        v: headerText,
+        t: "s",
+        s: headerStyle,
+      };
     });
 
-    const csvContent = csvRows.join("\n");
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const link = document.createElement("a");
+    // Apply styles to data rows
+    logs.forEach((row, rowIdx) => {
+      headers.forEach((key, colIdx) => {
+        const cellAddress = XLSX.utils.encode_cell({
+          r: rowIdx + 1,
+          c: colIdx,
+        });
+        if (worksheet[cellAddress]) {
+          worksheet[cellAddress].s = dataStyle;
+        }
+      });
+    });
+
+    // Adjust column widths
+    const columnWidths = [
+      { wch: 30 },
+      { wch: 30 },
+      { wch: 100 },
+      { wch: 30 },
+    ];
+
+    // Apply column widths
+    worksheet["!cols"] = columnWidths;
+
+    // Export to Excel file
+    const wbout = XLSX.write(workbook, {
+      bookType: "xlsx",
+      type: "array",
+      cellStyles: true,
+    });
+    const blob = new Blob([wbout], { type: "application/octet-stream" });
     const url = URL.createObjectURL(blob);
-    link.setAttribute("href", url);
-    link.setAttribute(
-      "download",
-      `system_logs_${new Date().toISOString().split("T")[0]}.csv`
-    );
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `system_logs_${
+      new Date().toISOString().split("T")[0]
+    }.xlsx`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
 
-    toast.success("System Activiy Logs exported successfully!");
+    toast.success("System Activity Logs exported successfully!");
   };
+
+  // const handleExport = () => {
+  //   if (currentUser?.role !== "systemadmin") {
+  //     setShowErrorModal(true);
+  //     return;
+  //   }
+  //   const csvRows = [];
+  //   const headers = ["Timestamp", "User", "Action", "Module"];
+  //   csvRows.push(headers.join(","));
+
+  //   filteredLogs.forEach((log) => {
+  //     const row = [
+  //       new Date(log.timestamp).toLocaleString(),
+  //       log.user.username,
+  //       log.details,
+  //       log.module,
+  //     ].map((field) => `"${(field?.toString() || "").replace(/"/g, '""')}"`);
+  //     csvRows.push(row.join(","));
+  //   });
+
+  //   const csvContent = csvRows.join("\n");
+  //   const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  //   const link = document.createElement("a");
+  //   const url = URL.createObjectURL(blob);
+  //   link.setAttribute("href", url);
+  //   link.setAttribute(
+  //     "download",
+  //     `system_logs_${new Date().toISOString().split("T")[0]}.csv`
+  //   );
+  //   document.body.appendChild(link);
+  //   link.click();
+  //   document.body.removeChild(link);
+
+  //   toast.success("System Activiy Logs exported successfully!");
+  // };
 
   const handleClearHistory = async () => {
     if (currentUser?.role !== "systemadmin") {
@@ -211,6 +309,15 @@ const SystemLogs = () => {
     };
   }, [showActivityDropdown]);
 
+  // const showCustomToast = () => {
+  //   toast(
+  //     <CustomToast
+  //       text={"Are You Sure?"}
+  //       confirmFunc={() => console.log("WALA LANG")}
+  //     />
+  //   );
+  // };
+
   return (
     <div className="system-logs-container">
       <div className="system-logs-header">
@@ -230,6 +337,7 @@ const SystemLogs = () => {
           <button onClick={handleClearHistory} className="clear-btn">
             Clear History
           </button>
+          {/* <button onClick={showCustomToast}>Show Alert Toast</button> */}
         </div>
       </div>
 

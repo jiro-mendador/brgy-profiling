@@ -11,6 +11,7 @@ import {
   ResponsiveContainer,
   Tooltip,
   Legend,
+  CartesianGrid,
 } from "recharts";
 import { ArrowUpIcon } from "lucide-react";
 import jsPDF from "jspdf";
@@ -20,7 +21,7 @@ import PermissionErrorModal from "../Permission/PermissionErrorModal";
 import "./AnalyticsDashboard.css";
 import axiosInstance from "../../axios";
 import { toast } from "react-toastify";
-import * as XLSX from "xlsx";
+import * as XLSX from "xlsx-js-style";
 import { saveAs } from "file-saver";
 
 const AnalyticsDashboard = () => {
@@ -28,6 +29,7 @@ const AnalyticsDashboard = () => {
   const [summaryData, setSummaryData] = useState([]);
   const [ageData, setAgeData] = useState([]);
   const [specialSectorsData, setSpecialSectorsData] = useState([]);
+  const [certSumData, setCertSumData] = useState([]);
   const [showErrorModal, setShowErrorModal] = useState(false);
   // const [timePeriod, setTimePeriod] = useState("Yearly"); // Default period
   // Families are no longer used for processing, since we’re getting API data directly.
@@ -70,10 +72,12 @@ const AnalyticsDashboard = () => {
         const certificateSummary = certificateTypes.map((type) => {
           const cert = stats.certReports.find((item) => item._id === type);
           return {
-            Title: type,
+            Certificate: type,
             Count: cert ? cert.count : 0,
           };
         });
+
+        setCertSumData(certificateSummary);
 
         // Build summaryData based on API stats
         setSummaryData([
@@ -125,7 +129,7 @@ const AnalyticsDashboard = () => {
             Change: `${stats.osyPercentage}%`,
             Description: "of population",
           },
-          ...certificateSummary,
+          // ...certificateSummary,
         ]);
 
         // Build ageData from the API's ageGroups data. Only include groups with count > 0.
@@ -141,13 +145,13 @@ const AnalyticsDashboard = () => {
 
         // Build special sectors data
         const processedSectorsData = [
-          { name: "Senior Citizens", value: stats.seniorCount },
-          { name: "PWD", value: stats.pwdCount },
-          { name: "Solo Parents", value: stats.soloParentCount },
-          { name: "OFW Members", value: stats.ofwCount },
-          { name: "Immigrants", value: stats.immigrantCount },
-          { name: "Out of School Youth", value: stats.osyCount },
-        ].filter((item) => item.value > 0);
+          { Category: "Senior Citizens", Count: stats.seniorCount },
+          { Category: "PWD", Count: stats.pwdCount },
+          { Category: "Solo Parents", Count: stats.soloParentCount },
+          { Category: "OFW Members", Count: stats.ofwCount },
+          { Category: "Immigrants", Count: stats.immigrantCount },
+          { Category: "Out of School Youth", Count: stats.osyCount },
+        ].filter((item) => item.Count > 0);
         setSpecialSectorsData(processedSectorsData);
       }
     } catch (error) {
@@ -295,10 +299,149 @@ const AnalyticsDashboard = () => {
     toast.success("Report exported successfully!");
   };
 
+  // const exportReportExcel = async () => {
+  //   const worksheet = XLSX.utils.json_to_sheet(summaryData);
+  //   const workbook = XLSX.utils.book_new();
+  //   XLSX.utils.book_append_sheet(workbook, worksheet, "Summary");
+
+  //   // Define custom header styling
+  //   const headerStyle = {
+  //     fill: { fgColor: { rgb: "1F53DD" } }, // Blue background
+  //     font: { color: { rgb: "FFFFFF" }, bold: true }, // White bold font
+  //     alignment: { horizontal: "center", vertical: "center" },
+  //   };
+
+  //   const dataStyle = {
+  //     fill: {
+  //       patternType: "solid",
+  //       fgColor: { rgb: "FFF2F2F2" }, // Light gray
+  //     },
+  //     font: {
+  //       color: { rgb: "FF000000" }, // Black
+  //     },
+  //     alignment: {
+  //       horizontal: "left",
+  //       vertical: "center",
+  //     },
+  //   };
+
+  //   // Manually set header row with styling
+  //   const headers = Object.keys(summaryData[0]);
+  //   headers.forEach((headerText, idx) => {
+  //     const cellAddress = XLSX.utils.encode_cell({ r: 0, c: idx });
+  //     worksheet[cellAddress] = {
+  //       v: headerText,
+  //       s: headerStyle,
+  //     };
+  //   });
+
+  //   // Style data rows
+  //   summaryData.forEach((summary, rowIdx) => {
+  //     headers.forEach((key, colIdx) => {
+  //       const cellAddress = XLSX.utils.encode_cell({
+  //         r: rowIdx + 1,
+  //         c: colIdx,
+  //       }); // +1 to skip header
+  //       if (!worksheet[cellAddress]) return; // if cell already set by json_to_sheet
+
+  //       worksheet[cellAddress].s = dataStyle;
+  //     });
+  //   });
+
+  //   // Apply column widths (optional, adjust as needed)
+  //   worksheet["!cols"] = headers.map(() => ({ wch: 25 }));
+
+  //   const excelBuffer = XLSX.write(workbook, {
+  //     bookType: "xlsx",
+  //     type: "array",
+  //   });
+
+  //   const fileData = new Blob([excelBuffer], {
+  //     type: "application/octet-stream",
+  //   });
+
+  //   const fileName = `Brgy-Summary-${timePeriod}-${
+  //     selectedValue ? selectedValue : "0"
+  //   }.xlsx`;
+  //   saveAs(fileData, fileName);
+
+  //   await axiosInstance.post("/system-logs", {
+  //     action: "Download",
+  //     module: "Analytics Report Export",
+  //     user: JSON.parse(localStorage.getItem("userId") || '""'),
+  //     details: `User ${
+  //       currentUser?.username || "unknown"
+  //     } exported an analytics report on ${new Date().toLocaleString()}`,
+  //   });
+
+  //   toast.success("Summary report exported!");
+  // };
+
   const exportReportExcel = async () => {
-    const worksheet = XLSX.utils.json_to_sheet(summaryData);
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Summary");
+
+    // Define styles
+    const headerStyle = {
+      fill: { patternType: "solid", fgColor: { rgb: "1F53DD" } },
+      font: { color: { rgb: "FFFFFF" }, bold: true },
+      alignment: { horizontal: "center", vertical: "center" },
+    };
+
+    const dataStyle = {
+      fill: { patternType: "solid", fgColor: { rgb: "F2F2F2" } },
+      font: { color: { rgb: "000000" } },
+      alignment: { horizontal: "left", vertical: "center" },
+    };
+
+    // Helper function to convert JSON data to styled AoA
+    const buildSection = (data, applyStyle = true) => {
+      if (!data || data.length === 0) return [];
+
+      const headers = Object.keys(data[0]);
+      const section = [];
+
+      // Header row
+      section.push(headers.map((header) => ({ v: header, s: headerStyle })));
+
+      // Data rows
+      data.forEach((row) => {
+        const styledRow = headers.map((key) => ({
+          v: row[key],
+          s: applyStyle ? dataStyle : undefined,
+        }));
+        section.push(styledRow);
+      });
+
+      return section;
+    };
+
+    // Combine sections with spacing
+    let fullData = [];
+
+    fullData = fullData.concat(buildSection(summaryData));
+    fullData.push([]); // Empty row
+
+    fullData = fullData.concat(buildSection(specialSectorsData));
+    fullData.push([]); // Empty row
+
+    fullData = fullData.concat(buildSection(certSumData));
+
+    // Create sheet from AoA
+    const worksheet = XLSX.utils.aoa_to_sheet(fullData);
+
+    // Optional: Set column widths
+    const widestSection = [summaryData, specialSectorsData, certSumData].reduce(
+      (acc, cur) => {
+        if (cur && cur.length > 0 && Object.keys(cur[0]).length > acc)
+          return Object.keys(cur[0]).length;
+        return acc;
+      },
+      0
+    );
+    worksheet["!cols"] = Array(widestSection).fill({ wch: 25 });
+
+    // Append and export
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Report");
 
     const excelBuffer = XLSX.write(workbook, {
       bookType: "xlsx",
@@ -309,11 +452,10 @@ const AnalyticsDashboard = () => {
       type: "application/octet-stream",
     });
 
-    const fileName = `Brgy-Summary-${timePeriod}-${
-      selectedValue ? selectedValue : "0"
-    }.xlsx`;
+    const fileName = `Brgy-Summary-${timePeriod}-${selectedValue || "0"}.xlsx`;
     saveAs(fileData, fileName);
 
+    // Log system activity
     await axiosInstance.post("/system-logs", {
       action: "Download",
       module: "Analytics Report Export",
@@ -400,6 +542,31 @@ const AnalyticsDashboard = () => {
     label: `${currentYear - i}`,
     value: currentYear - i,
   }));
+
+  const COLORSSPEC = ["#4299E1", "#48BB78", "#ED8936", "#F56565", "#9F7AEA"];
+
+  const certificateColors = [
+    "#4299E1", // Barangay Clearance
+    "#48BB78", // Certificate of Residency
+    "#38B2AC", // Certification of Residency
+    "#ED8936", // Certificate of Appearance
+    "#F56565", // Certificate of Good Moral
+    "#9F7AEA", // Barangay Certification
+    "#ECC94B", // Barangay Health Certification
+    "#A0AEC0", // Certification of Mortuary
+    "#F6AD55", // Permit to Travel
+    "#FC8181", // Certification of Business Closure
+    "#68D391", // Certificate of Indigency
+    "#63B3ED", // Certificate of No Income
+    "#B794F4", // Certificate of Income
+    "#F687B3", // Libreng Tulong Hatid
+    "#4FD1C5", // Certification of Late Registration
+    "#FBD38D", // Oath of Undertaking
+    "#CBD5E0", // Sworn Affidavit of the Barangay Council
+    "#81E6D9", // Certification of Live In Partner
+    "#FBB6CE", // Certification of Relationship
+    "#A3BFFA", // Solo Parent Certification
+  ];
 
   return (
     <div className="analytics-container">
@@ -543,18 +710,58 @@ const AnalyticsDashboard = () => {
                       formatter={(value) => [`${value} residents`, ""]}
                     />
                     <Legend />
-                    <Bar
+                    {/* <Bar
                       dataKey="value"
                       fill="#4299E1"
                       radius={[0, 4, 4, 0]}
                       label={{ position: "right", formatter: (value) => value }}
-                    />
+                    /> */}
+                    <Bar
+                      dataKey="value"
+                      radius={[0, 4, 4, 0]}
+                      label={{ position: "right", formatter: (value) => value }}
+                    >
+                      {specialSectorsData.map((entry, index) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={COLORSSPEC[index % COLORSSPEC.length]} // cycle through COLORS
+                        />
+                      ))}
+                    </Bar>
                   </BarChart>
                 </ResponsiveContainer>
               ) : (
                 <NoDataMessage />
               )}
             </div>
+          </div>
+        </div>
+
+        <div className="chart-container">
+          <h3 className="chart-title">Certificates Issued</h3>
+          <div className="chart-content">
+            {certSumData.length > 0 ? (
+              <ResponsiveContainer width="100%" height={400}>
+                <BarChart data={certSumData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="Title" />
+                  <YAxis />
+                  <Tooltip />
+                  <Bar dataKey="Count">
+                    {certSumData.map((entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={
+                          certificateColors[index % certificateColors.length]
+                        }
+                      />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <NoDataMessage />
+            )}
           </div>
         </div>
       </div>

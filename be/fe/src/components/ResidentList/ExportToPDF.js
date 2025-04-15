@@ -4,7 +4,7 @@ import { useContext } from "react";
 import { UserContext } from "../../contexts/userContext";
 import axiosInstance from "../../axios";
 import { toast } from "react-toastify";
-import * as XLSX from "xlsx";
+import * as XLSX from "xlsx-js-style";
 import { saveAs } from "file-saver";
 
 const ExportToPDF = ({ data, label, icon, type }) => {
@@ -293,29 +293,58 @@ const ExportToExcel = ({ data, label, icon, type }) => {
     }));
 
     // Create worksheet and workbook
-    const worksheet = XLSX.utils.json_to_sheet(residents);
     const workbook = XLSX.utils.book_new();
+    const worksheet = XLSX.utils.json_to_sheet(residents);
 
     // Add worksheet to workbook
     XLSX.utils.book_append_sheet(workbook, worksheet, "Residents");
 
-    // Style header row (optional)
-    const header = Object.keys(residents[0]);
-    const range = XLSX.utils.decode_range(worksheet["!ref"]);
+    // Define custom header styling
+    const headerStyle = {
+      fill: { fgColor: { rgb: "1F53DD" } }, // Blue background
+      font: { color: { rgb: "FFFFFF" }, bold: true }, // White bold font
+      alignment: { horizontal: "center", vertical: "center" },
+    };
 
-    for (let C = range.s.c; C <= range.e.c; ++C) {
-      const cell = worksheet[XLSX.utils.encode_cell({ r: 0, c: C })];
-      if (cell) {
-        cell.s = {
-          font: { bold: true },
-          fill: {
-            patternType: "solid",
-            fgColor: { rgb: "D9E1F2" },
-          },
-          alignment: { horizontal: "center" },
-        };
-      }
-    }
+    const dataStyle = {
+      fill: {
+        patternType: "solid",
+        fgColor: { rgb: "FFF2F2F2" }, // Light gray
+      },
+      font: {
+        color: { rgb: "FF000000" }, // Black
+      },
+      alignment: {
+        horizontal: "left",
+        vertical: "center",
+      },
+    };
+
+    // Manually set header row with styling
+    const headers = Object.keys(residents[0]);
+    headers.forEach((headerText, idx) => {
+      const cellAddress = XLSX.utils.encode_cell({ r: 0, c: idx });
+      worksheet[cellAddress] = {
+        v: headerText,
+        s: headerStyle,
+      };
+    });
+
+    // Style data rows
+    residents.forEach((resident, rowIdx) => {
+      headers.forEach((key, colIdx) => {
+        const cellAddress = XLSX.utils.encode_cell({
+          r: rowIdx + 1,
+          c: colIdx,
+        }); // +1 to skip header
+        if (!worksheet[cellAddress]) return; // if cell already set by json_to_sheet
+
+        worksheet[cellAddress].s = dataStyle;
+      });
+    });
+
+    // Apply column widths (optional, adjust as needed)
+    worksheet["!cols"] = headers.map(() => ({ wch: 25 }));
 
     // Export Excel file
     const excelBuffer = XLSX.write(workbook, {
@@ -329,15 +358,13 @@ const ExportToExcel = ({ data, label, icon, type }) => {
 
     let fileName = "Resident-List";
     if (residents.length <= 1) {
-      console.log("HH", residents);
       fileName = `Household-${residents[0]["Household No"]}`;
     }
 
     if (type) {
-      saveAs(fileData, type + " " + fileName + `-${formatted}.xlsx`);
+      saveAs(fileData, `${type} ${fileName}-${formatted}.xlsx`);
     } else {
-      // alert()
-      saveAs(fileData, fileName + `-${formatted}.xlsx`);
+      saveAs(fileData, `${fileName}-${formatted}.xlsx`);
     }
 
     await axiosInstance.post("/system-logs", {

@@ -272,9 +272,9 @@
         width: 100%;
     }
 
-    .chart-content {
+    /* .chart-content {
         height: 350px;
-    }
+    } */
 
     .brgy-logo-container {
         max-width: 200px; /* Even smaller on mobile */
@@ -290,9 +290,9 @@
         font-size: 1.75rem;
     }
 
-    .chart-content {
+    /* .chart-content {
         height: 300px;
-    }
+    } */
 }
 
 /* Print styles */
