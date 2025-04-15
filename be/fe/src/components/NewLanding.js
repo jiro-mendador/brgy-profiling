@@ -144,9 +144,18 @@ function NewLanding({ onLogin }) {
   return (
     <div className="landing-page split-layout">
       {/* Left side - Blue column with logo and content */}
-      {/* <div className="left-side">
-        <div className="left-content"></div>
-      </div> */}
+      <div className="left-side">
+        <div className="left-content">
+          <img
+            src="/images/system-logo-v2.png"
+            alt="System Logo"
+            className="system-logo"
+          />
+          <div className="content-text">
+            <p>"Streamlining Barangay Records for Efficient Data Management"</p>
+          </div>
+        </div>
+      </div>
 
       {/* Right side - White column with login form */}
       <div className="right-side">

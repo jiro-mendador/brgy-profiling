@@ -170,8 +170,8 @@
   /* Enhanced right side */
   .right-side {
     flex: 1;
-    background-color: #f8fafc;
-    background-image: linear-gradient(to bottom right, #f8fafc 0%, #f1f5f9 100%);
+    background-color: black;
+    /* background-image: linear-gradient(to bottom right, #f8fafc 0%, #f1f5f9 100%); */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -181,7 +181,7 @@
   }
   
   /* Subtle pattern for right side */
-  .right-side::before {
+  /* .right-side::before {
     content: '';
     position: absolute;
     top: 0;
@@ -195,10 +195,10 @@
     background-position: 0 0, 10px 10px;
     opacity: 0.5;
     z-index: 1;
-  }
+  } */
   
   /* Logo watermark in the background */
-  .right-side::after {
+  /* .right-side::after {
     content: '';
     position: absolute;
     top: 50%;
@@ -212,7 +212,7 @@
     transform: translate(-50%, -50%);
     z-index: 1;
     filter: grayscale(100%);
-  }
+  } */
   
   /* Enhanced auth form container */
   .auth-form-container {

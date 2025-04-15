@@ -40,12 +40,18 @@ html {
   font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont,
     sans-serif;
 
-  background-image: url("../../public/images/system-logo-w-text.png");
+  /* background-image: url("../../public/images/system-logo-w-text.png");
   background-size: cover;
-  background-position: center;
+  background-position: center; */
   margin: 0;
   /* height: 100dvh;*/
   min-height: 100vh;
+}
+
+@media screen and (max-width: 770px) {
+  .landing-page.split-layout {
+    flex-flow: column nowrap;
+  }
 }
 
 /* Enhanced left side */
@@ -54,18 +60,19 @@ html {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 2rem;
+  /* padding: 2rem; */
   position: relative;
   overflow: hidden;
+  min-width: 20rem;
 
   /* 🤍 Whiteish Glass effect */
-  background: rgba(248, 250, 252, 0.25); /* #f8fafc with transparency */
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(241, 245, 249, 0.3); /* #f1f5f9 as border */
-  border-radius: 1rem;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1); /* soft neutral shadow */
-  color: var(--primary-color);
+  /*background: rgba(248, 250, 252, 0.25); /* #f8fafc with transparency */
+  /*backdrop-filter: blur(14px);
+  /*-webkit-backdrop-filter: blur(14px);
+  /*border: 1px solid rgba(241, 245, 249, 0.3); /* #f1f5f9 as border */
+  /*border-radius: 1rem;
+  /*box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1); /* soft neutral shadow */
+  /* color: var(--primary-color); */
 }
 
 /* Decorative elements for left side */
@@ -103,9 +110,10 @@ html {
   justify-content: center;
   align-items: center;
   height: 100%;
-  padding: 3rem;
+  /* padding: 3rem; */
   position: relative;
   z-index: 2;
+  /* border:10px solid green; */
 }
 
 /* Enhanced logo area */
@@ -117,11 +125,12 @@ html {
 .system-logo {
   /* width: 120px; */
   /* height: auto; */
-  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+  /* filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1)); */
   transition: transform var(--transition-normal);
-  border-radius: 15px;
+  /* border-radius: 15px; */
   width: 100%;
-  max-width: 45rem;
+  /* max-width: 45rem; */
+  /* border:10px solid red; */
 }
 
 .system-logo:hover {
@@ -225,14 +234,15 @@ html {
   padding: 2rem;
   position: relative;
   overflow: hidden;
+  background-color: #1e40af;
 
   /* 🔷 Blueish Glass effect using your custom variables */
-  background: rgba(30, 64, 175, 0.5); /* --primary-color with transparency */
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
-  border: 1px solid rgba(59, 130, 246, 0.4); /* --primary-light as border */
+  /*background: rgba(30, 64, 175, 0.5); /* --primary-color with transparency */
+  /*backdrop-filter: blur(5px);
+  /*-webkit-backdrop-filter: blur(5px);
+  /*border: 1px solid rgba(59, 130, 246, 0.4); /* --primary-light as border */
   /* border-radius: 1rem; */
-  box-shadow: 0 8px 32px rgba(30, 58, 138, 0.4); /* --primary-dark as soft shadow */
+  /*box-shadow: 0 8px 32px rgba(30, 58, 138, 0.4); /* --primary-dark as soft shadow */
 
   height: inherit;
 }
