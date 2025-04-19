@@ -230,52 +230,125 @@ const ExportToExcel = ({ data, label, icon, type }) => {
       "Spouse School Level": res.spouseSchoolLevel,
       "Spouse Place of School": res.spousePlaceOfSchool,
 
-      // Family Members
-      "Family Members": res.familyMembers
-        .map((member, index) => {
-          return `Family Member #${index + 1}
-        - First Name: ${member.firstName}
-        - Middle Name: ${member.middleName}
-        - Last Name: ${member.lastName}
-        - Relationship: ${member.relationship}
-        - Age: ${member.age}
-        - Sex: ${member.sex}
-        - Birthday: ${member.birthday}
-        - Place of Birth: ${member.placeOfBirth}
-        - Nationality: ${member.nationality}
-        - Marital Status: ${member.maritalStatus}
-        - Religion: ${member.religion}
-        - Ethnicity: ${member.ethnicity}
-        - Registered Voter: ${member.isRegisteredVoter ? "Yes" : "No"}
-        - School Level: ${member.schoolLevel}
-        - Place of School: ${member.placeOfSchool}`;
-        })
-        .join("\n\n"),
+      ...Object.fromEntries(
+        res.familyMembers?.flatMap((member, index) => [
+          [`Family Member #${index + 1} First Name`, member.firstName || ""],
+          [`Family Member #${index + 1} Middle Name`, member.middleName || ""],
+          [`Family Member #${index + 1} Last Name`, member.lastName || ""],
+          [
+            `Family Member #${index + 1} Relationship`,
+            member.relationship || "",
+          ],
+          [`Family Member #${index + 1} Age`, member.age || ""],
+          [`Family Member #${index + 1} Sex`, member.sex || ""],
+          [`Family Member #${index + 1} Birthday`, member.birthday || ""],
+          [
+            `Family Member #${index + 1} Place of Birth`,
+            member.placeOfBirth || "",
+          ],
+          [`Family Member #${index + 1} Nationality`, member.nationality || ""],
+          [
+            `Family Member #${index + 1} Marital Status`,
+            member.maritalStatus || "",
+          ],
+          [`Family Member #${index + 1} Religion`, member.religion || ""],
+          [`Family Member #${index + 1} Ethnicity`, member.ethnicity || ""],
+          [
+            `Family Member #${index + 1} Registered Voter`,
+            member.isRegisteredVoter ? "Yes" : "No",
+          ],
+          [
+            `Family Member #${index + 1} School Level`,
+            member.schoolLevel || "",
+          ],
+          [
+            `Family Member #${index + 1} Place of School`,
+            member.placeOfSchool || "",
+          ],
+        ])
+      ),
 
-      // Additional Information
-      "Additional Info": res.additionalInfos
-        .map((info, index) => {
-          return `Additional Info #${index + 1}
-        - Name: ${info.name}
-        - Pregnant: ${info.pregnant}
-        - Months Pregnant: ${info.pregnantMonths}
-        - Family Planning: ${info.familyPlanning}
-        - PWD: ${info.pwd}
-        - Solo Parent: ${info.soloParent}
-        - Senior Citizen: ${info.seniorCitizen}
-        - Maintenance: ${info.maintenance}
-        - PhilHealth: ${info.philhealth}
-        - House Lot: ${info.houseLot}
-        - Water Supply: ${info.waterSupply}
-        - Comfort Room: ${info.comfortRoom}
-        - OFW Country: ${info.ofwCountry}
-        - Years in Service: ${info.yearsInService}
-        - Out of School: ${info.outOfSchool}
-        - Immigrant Nationality: ${info.immigrantNationality}
-        - Years of Stay: ${info.yearsOfStay}
-        - Residence: ${info.residence}`;
-        })
-        .join("\n\n"),
+      ...Object.fromEntries(
+        res.additionalInfos?.flatMap((info, index) => [
+          [`Add. Info #${index + 1} Name`, info.name || ""],
+          [`Add. Info #${index + 1} Pregnant`, info.pregnant || ""],
+          [
+            `Add. Info #${index + 1} Months Pregnant`,
+            info.pregnantMonths || "",
+          ],
+          [
+            `Add. Info #${index + 1} Family Planning`,
+            info.familyPlanning || "",
+          ],
+          [`Add. Info #${index + 1} PWD`, info.pwd || ""],
+          [`Add. Info #${index + 1} Solo Parent`, info.soloParent || ""],
+          [`Add. Info #${index + 1} Senior Citizen`, info.seniorCitizen || ""],
+          [`Add. Info #${index + 1} Maintenance`, info.maintenance || ""],
+          [`Add. Info #${index + 1} PhilHealth`, info.philhealth || ""],
+          [`Add. Info #${index + 1} House Lot`, info.houseLot || ""],
+          [`Add. Info #${index + 1} Water Supply`, info.waterSupply || ""],
+          [`Add. Info #${index + 1} Comfort Room`, info.comfortRoom || ""],
+          [`Add. Info #${index + 1} OFW Country`, info.ofwCountry || ""],
+          [
+            `Add. Info #${index + 1} Years in Service`,
+            info.yearsInService || "",
+          ],
+          [`Add. Info #${index + 1} Out of School`, info.outOfSchool || ""],
+          [
+            `Add. Info #${index + 1} Immigrant Nationality`,
+            info.immigrantNationality || "",
+          ],
+          [`Add. Info #${index + 1} Years of Stay`, info.yearsOfStay || ""],
+          [`Add. Info #${index + 1} Residence`, info.residence || ""],
+        ])
+      ),
+
+      // // Family Members
+      // "Family Members": res.familyMembers
+      //   .map((member, index) => {
+      //     return `Family Member #${index + 1}
+      //   - First Name: ${member.firstName}
+      //   - Middle Name: ${member.middleName}
+      //   - Last Name: ${member.lastName}
+      //   - Relationship: ${member.relationship}
+      //   - Age: ${member.age}
+      //   - Sex: ${member.sex}
+      //   - Birthday: ${member.birthday}
+      //   - Place of Birth: ${member.placeOfBirth}
+      //   - Nationality: ${member.nationality}
+      //   - Marital Status: ${member.maritalStatus}
+      //   - Religion: ${member.religion}
+      //   - Ethnicity: ${member.ethnicity}
+      //   - Registered Voter: ${member.isRegisteredVoter ? "Yes" : "No"}
+      //   - School Level: ${member.schoolLevel}
+      //   - Place of School: ${member.placeOfSchool}`;
+      //   })
+      //   .join("\n\n"),
+
+      // // Additional Information
+      // "Additional Info": res.additionalInfos
+      //   .map((info, index) => {
+      //     return `Additional Info #${index + 1}
+      //   - Name: ${info.name}
+      //   - Pregnant: ${info.pregnant}
+      //   - Months Pregnant: ${info.pregnantMonths}
+      //   - Family Planning: ${info.familyPlanning}
+      //   - PWD: ${info.pwd}
+      //   - Solo Parent: ${info.soloParent}
+      //   - Senior Citizen: ${info.seniorCitizen}
+      //   - Maintenance: ${info.maintenance}
+      //   - PhilHealth: ${info.philhealth}
+      //   - House Lot: ${info.houseLot}
+      //   - Water Supply: ${info.waterSupply}
+      //   - Comfort Room: ${info.comfortRoom}
+      //   - OFW Country: ${info.ofwCountry}
+      //   - Years in Service: ${info.yearsInService}
+      //   - Out of School: ${info.outOfSchool}
+      //   - Immigrant Nationality: ${info.immigrantNationality}
+      //   - Years of Stay: ${info.yearsOfStay}
+      //   - Residence: ${info.residence}`;
+      //   })
+      //   .join("\n\n"),
 
       // // Family Members
       // "Family Members": res.familyMembers
@@ -306,22 +379,43 @@ const ExportToExcel = ({ data, label, icon, type }) => {
       alignment: { horizontal: "center", vertical: "center" },
     };
 
-    const dataStyle = {
-      fill: {
-        patternType: "solid",
-        fgColor: { rgb: "FFF2F2F2" }, // Light gray
-      },
-      font: {
-        color: { rgb: "FF000000" }, // Black
-      },
-      alignment: {
-        horizontal: "left",
-        vertical: "center",
-      },
-    };
+    // const dataStyle = {
+    //   fill: {
+    //     patternType: "solid",
+    //     fgColor: { rgb: "FFF2F2F2" }, // Light gray
+    //   },
+    //   font: {
+    //     color: { rgb: "FF000000" }, // Black
+    //   },
+    //   alignment: {
+    //     horizontal: "left",
+    //     vertical: "center",
+    //   },
+    // };
+
+    // const getDataStyle = (data) => {
+    //   return {
+    //     fill: {
+    //       patternType: "solid",
+    //       fgColor: { rgb: "FFF2F2F2" }, // Light gray
+    //     },
+    //     font: {
+    //       color: { rgb: "FF000000" }, // Black
+    //     },
+    //     alignment: {
+    //       horizontal: typeof data === "number" ? "center" : "left", // Center for numbers, left for others
+    //       vertical: "center",
+    //     },
+    //   };
+    // };
+
 
     // Manually set header row with styling
-    const headers = Object.keys(residents[0]);
+    // const headers = Object.keys(residents[0]);
+    const headers = Array.from(
+      new Set(residents.flatMap((resident) => Object.keys(resident)))
+    );
+
     headers.forEach((headerText, idx) => {
       const cellAddress = XLSX.utils.encode_cell({ r: 0, c: idx });
       worksheet[cellAddress] = {
@@ -330,21 +424,57 @@ const ExportToExcel = ({ data, label, icon, type }) => {
       };
     });
 
-    // Style data rows
     residents.forEach((resident, rowIdx) => {
       headers.forEach((key, colIdx) => {
         const cellAddress = XLSX.utils.encode_cell({
-          r: rowIdx + 1,
+          r: rowIdx + 1, // +1 to skip header
           c: colIdx,
-        }); // +1 to skip header
-        if (!worksheet[cellAddress]) return; // if cell already set by json_to_sheet
+        });
 
+        // Set default empty string if the cell doesn't exist
+        if (!worksheet[cellAddress]) {
+          worksheet[cellAddress] = { v: "", t: "s" }; // set empty string if no value
+        }
+
+        // Adjust data style dynamically based on the data type (number or not)
+        const dataStyle = {
+          fill: {
+            patternType: "solid",
+            fgColor: { rgb: "FFF2F2F2" }, // Light gray
+          },
+          font: {
+            color: { rgb: "FF000000" }, // Black
+          },
+          alignment: {
+            horizontal: typeof resident[key] === "number" ? "center" : "left", // Center for numbers, left for others
+            vertical: "center",
+          },
+        };
+
+        // Apply the style to the current cell
         worksheet[cellAddress].s = dataStyle;
       });
     });
 
+    // // Style data rows
+    // residents.forEach((resident, rowIdx) => {
+    //   headers.forEach((key, colIdx) => {
+    //     const cellAddress = XLSX.utils.encode_cell({
+    //       r: rowIdx + 1,
+    //       c: colIdx,
+    //     }); // +1 to skip header
+    //     if (!worksheet[cellAddress]) {
+    //       worksheet[cellAddress] = { v: "", t: "s" }; // set empty string if no value
+    //     }
+    //     worksheet[cellAddress].s = dataStyle;
+    //     // if (!worksheet[cellAddress]) return; // if cell already set by json_to_sheet
+
+    //     // worksheet[cellAddress].s = dataStyle;
+    //   });
+    // });
+
     // Apply column widths (optional, adjust as needed)
-    worksheet["!cols"] = headers.map(() => ({ wch: 25 }));
+    worksheet["!cols"] = headers.map(() => ({ wch: 50 }));
 
     // Export Excel file
     const excelBuffer = XLSX.write(workbook, {

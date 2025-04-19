@@ -9,7 +9,7 @@ const getCertRecord = async (req, res) => {
     if (!certRecord) {
       return res.status(404).json({ message: "Record not found" });
     }
-    res.status(200).json(certRecord);
+    res.status(200).json({ success: true, certRecord });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
   }
@@ -22,21 +22,49 @@ const getCertRecords = async (req, res) => {
     const certRecords = await Certificate.find()
       .populate("printedBy", "_id username email")
       .sort({ timestamp: -1 });
-    res.status(200).json({ certRecords, certReports });
+    return res.status(200).json({ success: true, certRecords });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    return res
+      .status(500)
+      .json({ message: "Server error", error: error.message });
   }
 };
 
+// const createCertificateRecord = async (req, res) => {
+//   try {
+//     const newRecord = new Certificate(req.body);
+//     await newRecord.save();
+//     return res
+//       .status(201)
+//       .json({ message: "Record created successfully", record: newRecord });
+//   } catch (error) {
+//     return res
+//       .status(500)
+//       .json({ message: "Server error", error: error.message });
+//   }
+// };
+
 const createCertificateRecord = async (req, res) => {
   try {
-    const newRecord = new Certificate(req.body);
+    const certificateData = { ...req.body };
+    console.log(certificateData);
+
+    // Check if 'data' exists and has at least one element before trying to access 'name'
+    if (certificateData.data && certificateData.data.name) {
+      certificateData.data.requestedBy = certificateData.data.name;
+      delete certificateData.data.name; // Remove 'name' if you don't want it saved
+    }
+
+    const newRecord = new Certificate(certificateData);
     await newRecord.save();
-    res
+
+    return res
       .status(201)
       .json({ message: "Record created successfully", record: newRecord });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    return res
+      .status(500)
+      .json({ message: "Server error", error: error.message });
   }
 };
 

@@ -23,11 +23,228 @@ const CertificateManager = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const [showErrorModal, setShowErrorModal] = useState(false);
 
+  // ! SELECT OPTIONS
+  const civilStatusOptions = [
+    "Single",
+    "Married",
+    "Widowed",
+    "Separated",
+    "Live-in",
+  ];
+  const relationshipOptions = [
+    "Son",
+    "Daughter",
+    "Mother",
+    "Father",
+    "Grandmother",
+    "Grandfather",
+    "Aunt",
+    "Uncle",
+    "Cousin",
+    "Other",
+  ];
+  const nationalityOptions = [
+    "Afghan",
+    "Albanian",
+    "Algerian",
+    "American",
+    "Andorran",
+    "Angolan",
+    "Antiguan",
+    "Argentine",
+    "Armenian",
+    "Australian",
+    "Austrian",
+    "Azerbaijani",
+    "Bahamian",
+    "Bahraini",
+    "Bangladeshi",
+    "Barbadian",
+    "Belarusian",
+    "Belgian",
+    "Belizean",
+    "Beninese",
+    "Bhutanese",
+    "Bolivian",
+    "Bosnian",
+    "Botswanan",
+    "Brazilian",
+    "British",
+    "Bruneian",
+    "Bulgarian",
+    "Burkinabe",
+    "Burmese",
+    "Burundian",
+    "Cabo Verdean",
+    "Cambodian",
+    "Cameroonian",
+    "Canadian",
+    "Central African",
+    "Chadian",
+    "Chilean",
+    "Chinese",
+    "Colombian",
+    "Comorian",
+    "Congolese (Congo-Brazzaville)",
+    "Congolese (Congo-Kinshasa)",
+    "Costa Rican",
+    "Croatian",
+    "Cuban",
+    "Cypriot",
+    "Czech",
+    "Danish",
+    "Djiboutian",
+    "Dominican",
+    "Ecuadorean",
+    "Egyptian",
+    "Emirati",
+    "Equatorial Guinean",
+    "Eritrean",
+    "Estonian",
+    "Ethiopian",
+    "Fijian",
+    "Filipino",
+    "Finnish",
+    "French",
+    "Gabonese",
+    "Gambian",
+    "Georgian",
+    "German",
+    "Ghanaian",
+    "Greek",
+    "Grenadian",
+    "Guatemalan",
+    "Guinean",
+    "Guinea-Bissauan",
+    "Guyanese",
+    "Haitian",
+    "Honduran",
+    "Hungarian",
+    "Icelander",
+    "Indian",
+    "Indonesian",
+    "Iranian",
+    "Iraqi",
+    "Irish",
+    "Israeli",
+    "Italian",
+    "Ivorian",
+    "Jamaican",
+    "Japanese",
+    "Jordanian",
+    "Kazakh",
+    "Kenyan",
+    "Kiribati",
+    "Kuwaiti",
+    "Kyrgyz",
+    "Laotian",
+    "Latvian",
+    "Lebanese",
+    "Liberian",
+    "Libyan",
+    "Liechtensteiner",
+    "Lithuanian",
+    "Luxembourger",
+    "Macedonian",
+    "Malagasy",
+    "Malawian",
+    "Malaysian",
+    "Maldivian",
+    "Malian",
+    "Maltese",
+    "Marshallese",
+    "Mauritanian",
+    "Mauritian",
+    "Mexican",
+    "Micronesian",
+    "Moldovan",
+    "Monacan",
+    "Mongolian",
+    "Montenegrin",
+    "Moroccan",
+    "Mozambican",
+    "Namibian",
+    "Nauruan",
+    "Nepalese",
+    "Netherlander",
+    "New Zealander",
+    "Nicaraguan",
+    "Nigerien",
+    "Nigerian",
+    "North Korean",
+    "Norwegian",
+    "Omani",
+    "Pakistani",
+    "Palauan",
+    "Palestinian",
+    "Panamanian",
+    "Papua New Guinean",
+    "Paraguayan",
+    "Peruvian",
+    "Philippine",
+    "Polish",
+    "Portuguese",
+    "Qatari",
+    "Romanian",
+    "Russian",
+    "Rwandan",
+    "Saint Lucian",
+    "Salvadoran",
+    "Samoan",
+    "San Marinese",
+    "Sao Tomean",
+    "Saudi",
+    "Senegalese",
+    "Serbian",
+    "Seychellois",
+    "Sierra Leonean",
+    "Singaporean",
+    "Slovak",
+    "Slovenian",
+    "Solomon Islander",
+    "Somali",
+    "South African",
+    "South Korean",
+    "Spanish",
+    "Sri Lankan",
+    "Sudanese",
+    "Surinamer",
+    "Swazi",
+    "Swedish",
+    "Swiss",
+    "Syrian",
+    "Taiwanese",
+    "Tajik",
+    "Tanzanian",
+    "Thai",
+    "Timorese",
+    "Togolese",
+    "Tongan",
+    "Trinidadian or Tobagonian",
+    "Tunisian",
+    "Turkish",
+    "Turkmen",
+    "Tuvaluan",
+    "Ugandan",
+    "Ukrainian",
+    "Uruguayan",
+    "Uzbek",
+    "Vanuatuan",
+    "Venezuelan",
+    "Vietnamese",
+    "Yemeni",
+    "Zambian",
+    "Zimbabwean",
+    "Others",
+  ];
+  const genderOptions = ["Male", "Female", "Other"];
+  // ! END OF SELECT OPTIONS
+
   const [barangayClearanceData, setBarangayClearanceData] = useState({
     name: "",
     birthPlace: "",
     age: "",
-    civilStatus: "",
+    civilStatus: "Single",
     birthday: "",
     parents: "",
     purpose: "",
@@ -38,9 +255,9 @@ const CertificateManager = () => {
   const [residencyDatav1, setResidencyDatav1] = useState({
     name: "",
     age: "",
-    nationality: "",
-    gender: "",
-    civilStatus: "",
+    nationality: "Filipino",
+    gender: "Male",
+    civilStatus: "Single",
     streetAddress: "",
     purpose: "",
     dateOfIssuance: "",
@@ -107,7 +324,7 @@ const CertificateManager = () => {
 
   const [travelData, setTravelData] = useState({
     name: "",
-    civilStatus: "",
+    civilStatus: "Single",
     age: "",
     location: "",
     thingsOrAnimalsCarrying: "",
@@ -117,7 +334,7 @@ const CertificateManager = () => {
 
   const [businessPermitData, setBusinessPermitData] = useState({
     name: "",
-    civilStatus: "",
+    civilStatus: "Single",
     age: "",
     location: "",
     thingsOrAnimalsCarrying: "",
@@ -137,8 +354,8 @@ const CertificateManager = () => {
   const [indigencyData, setIndigencyData] = useState({
     name: "",
     age: "",
-    gender: "",
-    civilStatus: "",
+    gender: "Male",
+    civilStatus: "Single",
     streetAddress: "",
     purpose: "",
     dateOfIssuance: "",
@@ -169,7 +386,7 @@ const CertificateManager = () => {
     name: "",
     age: "",
     streetAddress: "",
-    beneficiaryRelationship: "",
+    beneficiaryRelationship: "Son",
     beneficiaryName: "",
     dateOfDeath: "",
     dateOfIssuance: "",
@@ -178,7 +395,7 @@ const CertificateManager = () => {
 
   const [lateRegData, setLateRegData] = useState({
     name: "",
-    gender: "",
+    gender: "Male",
     birthday: "",
     birthplace: "",
     parents: "",
@@ -198,14 +415,14 @@ const CertificateManager = () => {
 
   const [councilAffidavitData, setCouncilAffidavitData] = useState({
     name: "",
-    nationality: "",
+    nationality: "Filipino",
     streetAddress: "",
     setHandDate: "",
     dateSworned: "",
   });
 
   const [liveInData, setLiveInData] = useState({
-    partnersName: "",
+    name: "",
     streetAddress: "",
     since: "",
     purpose: "",
@@ -604,6 +821,13 @@ const CertificateManager = () => {
       console.log(certificateRecRes);
 
       if (certificateRecRes.data.message) {
+        console.log("HAHAHA", {
+          action: "Download",
+          module: "Manage Certificate Templates",
+          user: currentUser.id,
+          details: `User ${currentUser.username} downloaded ${certName}`,
+        });
+
         await axiosInstance.post("/system-logs", {
           action: "Download",
           module: "Manage Certificate Templates",
@@ -625,7 +849,7 @@ const CertificateManager = () => {
         name: "",
         birthPlace: "",
         age: "",
-        civilStatus: "",
+        civilStatus: "Single",
         birthday: "",
         parents: "",
         purpose: "",
@@ -635,9 +859,9 @@ const CertificateManager = () => {
       setResidencyDatav1({
         name: "",
         age: "",
-        nationality: "",
-        gender: "",
-        civilStatus: "",
+        nationality: "Filipino",
+        gender: "Male",
+        civilStatus: "Single",
         streetAddress: "",
         purpose: "",
         dateOfIssuance: "",
@@ -697,7 +921,7 @@ const CertificateManager = () => {
       });
       setTravelData({
         name: "",
-        civilStatus: "",
+        civilStatus: "Single",
         age: "",
         location: "",
         thingsOrAnimalsCarrying: "",
@@ -715,8 +939,8 @@ const CertificateManager = () => {
       setIndigencyData({
         name: "",
         age: "",
-        gender: "",
-        civilStatus: "",
+        gender: "Male",
+        civilStatus: "Single",
         streetAddress: "",
         purpose: "",
         dateOfIssuance: "",
@@ -744,7 +968,7 @@ const CertificateManager = () => {
         name: "",
         age: "",
         streetAddress: "",
-        beneficiaryRelationship: "",
+        beneficiaryRelationship: "Son",
         beneficiaryName: "",
         dateOfDeath: "",
         dateOfIssuance: "",
@@ -752,7 +976,7 @@ const CertificateManager = () => {
       });
       setLateRegData({
         name: "",
-        gender: "",
+        gender: "Male",
         birthday: "",
         birthplace: "",
         parents: "",
@@ -770,13 +994,13 @@ const CertificateManager = () => {
       });
       setCouncilAffidavitData({
         name: "",
-        nationality: "",
+        nationality: "Filipino",
         streetAddress: "",
         setHandDate: "",
         dateSworned: "",
       });
       setLiveInData({
-        partnersName: "",
+        name: "",
         streetAddress: "",
         since: "",
         purpose: "",
@@ -1003,12 +1227,17 @@ const CertificateManager = () => {
             </div>
             <div>
               <label>Civil Status:</label>
-              <input
-                type="text"
+              <select
                 name="civilStatus"
                 value={barangayClearanceData.civilStatus}
                 onChange={handleClearanceInputChange}
-              />
+              >
+                {civilStatusOptions.map((status) => (
+                  <option key={status} value={status}>
+                    {status}
+                  </option>
+                ))}
+              </select>
             </div>
             <div>
               <label>Birthday:</label>
@@ -1074,12 +1303,17 @@ const CertificateManager = () => {
             </div>
             <div>
               <label>Nationality:</label>
-              <input
-                type="text"
+              <select
                 name="nationality"
                 value={residencyDatav1.nationality}
                 onChange={handleResidencyInputChangeV1}
-              />
+              >
+                {nationalityOptions.map((status) => (
+                  <option key={status} value={status}>
+                    {status}
+                  </option>
+                ))}
+              </select>
             </div>
             <div>
               <label>Age:</label>
@@ -1092,21 +1326,31 @@ const CertificateManager = () => {
             </div>
             <div>
               <label>Civil Status:</label>
-              <input
-                type="text"
+              <select
                 name="civilStatus"
                 value={residencyDatav1.civilStatus}
                 onChange={handleResidencyInputChangeV1}
-              />
+              >
+                {civilStatusOptions.map((status) => (
+                  <option key={status} value={status}>
+                    {status}
+                  </option>
+                ))}
+              </select>
             </div>
             <div>
               <label>Gender:</label>
-              <input
-                type="text"
+              <select
                 name="gender"
                 value={residencyDatav1.gender}
                 onChange={handleResidencyInputChangeV1}
-              />
+              >
+                {genderOptions.map((status) => (
+                  <option key={status} value={status}>
+                    {status}
+                  </option>
+                ))}
+              </select>
             </div>
             <div>
               <label>Street Address</label>
@@ -1544,12 +1788,17 @@ const CertificateManager = () => {
             </div>
             <div>
               <label>Civil Status:</label>
-              <input
-                type="text"
+              <select
                 name="civilStatus"
                 value={travelData.civilStatus}
                 onChange={handleTravelInputChange}
-              />
+              >
+                {civilStatusOptions.map((status) => (
+                  <option key={status} value={status}>
+                    {status}
+                  </option>
+                ))}
+              </select>
             </div>
             <div>
               <label>Age:</label>
@@ -1683,21 +1932,31 @@ const CertificateManager = () => {
             </div>
             <div>
               <label>Gender:</label>
-              <input
-                type="text"
+              <select
                 name="gender"
                 value={indigencyData.gender}
                 onChange={handleIndigencyInputChange}
-              />
+              >
+                {genderOptions.map((status) => (
+                  <option key={status} value={status}>
+                    {status}
+                  </option>
+                ))}
+              </select>
             </div>
             <div>
               <label>Civil Status:</label>
-              <input
-                type="text"
+              <select
                 name="civilStatus"
                 value={indigencyData.civilStatus}
                 onChange={handleIndigencyInputChange}
-              />
+              >
+                {civilStatusOptions.map((status) => (
+                  <option key={status} value={status}>
+                    {status}
+                  </option>
+                ))}
+              </select>
             </div>
             <div>
               <label>Street Address</label>
@@ -1905,12 +2164,17 @@ const CertificateManager = () => {
             </div>
             <div>
               <label>Relationship to the Beneficiary:</label>
-              <input
-                type="text"
+              <select
                 name="beneficiaryRelationship"
                 value={tulongHatidData.beneficiaryRelationship}
                 onChange={handleTulongHatidInputChange}
-              />
+              >
+                {relationshipOptions.map((status) => (
+                  <option key={status} value={status}>
+                    {status}
+                  </option>
+                ))}
+              </select>
             </div>
             <div>
               <label>Beneficiary Name:</label>
@@ -1964,12 +2228,17 @@ const CertificateManager = () => {
             </div>
             <div>
               <label>Gender:</label>
-              <input
-                type="text"
+              <select
                 name="gender"
                 value={lateRegData.gender}
                 onChange={handleLateRegInputChange}
-              />
+              >
+                {genderOptions.map((status) => (
+                  <option key={status} value={status}>
+                    {status}
+                  </option>
+                ))}
+              </select>
             </div>
             <div>
               <label>Street Address</label>
@@ -2112,12 +2381,17 @@ const CertificateManager = () => {
             </div>
             <div>
               <label>Nationality:</label>
-              <input
-                type="text"
+              <select
                 name="nationality"
                 value={councilAffidavitData.nationality}
                 onChange={handleCouncilAffidavitInputChange}
-              />
+              >
+                {nationalityOptions.map((status) => (
+                  <option key={status} value={status}>
+                    {status}
+                  </option>
+                ))}
+              </select>
             </div>
             <div>
               <label>Street Address</label>
@@ -2158,7 +2432,7 @@ const CertificateManager = () => {
               <input
                 type="text"
                 name="partnersName"
-                value={liveInData.partnersName}
+                value={liveInData.name}
                 onChange={handleLiveInInputChange}
               />
             </div>

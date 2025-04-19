@@ -23,6 +23,7 @@ import axiosInstance from "../../axios";
 import { toast } from "react-toastify";
 import * as XLSX from "xlsx-js-style";
 import { saveAs } from "file-saver";
+import axios from "axios";
 
 const AnalyticsDashboard = () => {
   const [currentUser, setCurrentUser] = useState(null);
@@ -36,6 +37,10 @@ const AnalyticsDashboard = () => {
 
   const [timePeriod, setTimePeriod] = useState("Monthly");
   const [selectedValue, setSelectedValue] = useState(new Date().getMonth() + 1);
+
+  const [certificatesIssuedListData, setCertificatesIssuedListData] = useState(
+    []
+  );
 
   const certificateTypes = [
     "Barangay Clearance",
@@ -159,6 +164,23 @@ const AnalyticsDashboard = () => {
     }
   };
 
+  const getCertificateIssuedList = async () => {
+    try {
+      const res = await axiosInstance.get(
+        `/certificates?filterType=${timePeriod}&filterValue=${selectedValue}`
+      );
+      // const res = await axios.get(`http://localhost:8003/api/certificates`);
+      if (res.data && res.data.success) {
+        const resData = res.data.certRecords;
+        console.log("dsada:", resData);
+
+        setCertificatesIssuedListData(resData);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
   useEffect(() => {
     getReports();
 
@@ -169,6 +191,10 @@ const AnalyticsDashboard = () => {
       setShowErrorModal(true);
       return;
     }
+  }, []);
+
+  useEffect(() => {
+    getCertificateIssuedList();
   }, []);
 
   // The timePeriod and families processing have been removed,
@@ -705,19 +731,13 @@ const AnalyticsDashboard = () => {
                     margin={{ left: 150 }}
                   >
                     <XAxis type="number" />
-                    <YAxis type="category" dataKey="name" width={140} />
+                    <YAxis type="category" dataKey="Category" width={140} />
                     <Tooltip
                       formatter={(value) => [`${value} residents`, ""]}
                     />
                     <Legend />
-                    {/* <Bar
-                      dataKey="value"
-                      fill="#4299E1"
-                      radius={[0, 4, 4, 0]}
-                      label={{ position: "right", formatter: (value) => value }}
-                    /> */}
                     <Bar
-                      dataKey="value"
+                      dataKey="Count"
                       radius={[0, 4, 4, 0]}
                       label={{ position: "right", formatter: (value) => value }}
                     >
@@ -738,13 +758,13 @@ const AnalyticsDashboard = () => {
         </div>
 
         <div className="chart-container">
-          <h3 className="chart-title">Certificates Issued</h3>
+          <h3 className="chart-title">Certificates Issued Count</h3>
           <div className="chart-content">
             {certSumData.length > 0 ? (
               <ResponsiveContainer width="100%" height={400}>
                 <BarChart data={certSumData}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="Title" />
+                  <XAxis dataKey="Certificate" />
                   <YAxis />
                   <Tooltip />
                   <Bar dataKey="Count">
@@ -762,6 +782,78 @@ const AnalyticsDashboard = () => {
             ) : (
               <NoDataMessage />
             )}
+          </div>
+        </div>
+
+        <div className="certificate-issued-container">
+          <p>List of Certificates Issued</p>
+          <div className="certificate-issued-inner-container">
+            {certificatesIssuedListData.map((certificate, index) => {
+              const personData = certificate.data[0]; // first and only data object
+              const issuedTo = personData?.requestedBy || "Unknown";
+              const timestamp = new Date(
+                certificate.timestamp
+              ).toLocaleString();
+
+              return (
+                <div className="certificate-issued" key={index}>
+                  <p>
+                    <span style={{
+                                  color:
+                                    certificateColors[
+                                      index % certificateColors.length
+                                    ],
+                                }}>{certificate.type}</span> was issued to
+                    <span style={{
+                                  color:
+                                    certificateColors[
+                                      index % certificateColors.length
+                                    ],
+                                }}> {issuedTo} </span> by{" "}
+                    <span style={{
+                                  color:
+                                    certificateColors[
+                                      index % certificateColors.length
+                                    ],
+                                }}>{certificate.printedBy?.username || "N/A"}</span> on{" "}
+                    <span style={{
+                                  color:
+                                    certificateColors[
+                                      index % certificateColors.length
+                                    ],
+                                }}>{timestamp}</span>
+                  </p>
+                  <p>Details</p>
+                  <div className="certificate-issued-details">
+                    {personData &&
+                      Object.entries(personData).map(([key, value], i) => {
+                        // Format key: from "dateOfIssuance" → "Date Of Issuance"
+                        const formattedKey = key
+                          .replace(/([A-Z])/g, " $1") // Add space before capital letters
+                          .replace(/^./, (char) => char.toUpperCase()); // Capitalize first letter
+
+                        return (
+                          <p key={i}>
+                            <strong>
+                              <span
+                                style={{
+                                  color:
+                                    certificateColors[
+                                      index % certificateColors.length
+                                    ],
+                                }}
+                              >
+                                {formattedKey}:
+                              </span>
+                            </strong>{" "}
+                            {value}
+                          </p>
+                        );
+                      })}
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>

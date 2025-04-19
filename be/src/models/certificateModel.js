@@ -36,7 +36,10 @@ const certificateSchema = new mongoose.Schema({
     ref: "User",
     required: true,
   },
-  data: [],
+  data: {
+    type: [mongoose.Schema.Types.Mixed],
+    default: [],
+  },
 });
 
 export const Certificate = mongoose.model("Certificate", certificateSchema);
